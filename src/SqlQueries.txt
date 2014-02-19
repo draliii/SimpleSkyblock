@@ -1,0 +1,156 @@
+<main_nick> 	= nick, ktery spousti prikaz
+<main_island_id>= id ostrova, ktery patri odesilateli prikazu
+<nick>			= nick, ktery je jako parametr (treba /sb home <nick>)
+
+výběr a smazání ostrova:
+//expand 300 up
+//expand 300 down
+//expand 50 east
+//expand 50 west
+//expand 50 north
+//expand 50 south
+//set 0
+
+TODO:
+pridat podminku, ze lze upravovat ostrov pouze kde je active = 1, i prichod na ostrov na active = 1
+-----------------------------------
+/sb new
+ (1) SELECT `id` 
+ FROM skys_islands
+ WHERE `nick` = '<main_nick>';
+- pokud je vysledek 1
+-- vypis hlasku ze jiz ma ostrov. Pro teleport na nej je potreba napsat /sb home, pro reset /sb renew
+- pokud je pocet vysledeku dotazu c. 1 = 0:
+-- zjisteni, jestli je nekde neaktivni ostrov
+ (2) SELECT id, x, z FROM skys_islands WHERE active = 0 ORDER BY id ASC LIMIT 1
+-- pokud vrati 1 vysledek:
+--- Provedeni dotazu:
+ (3) DELETE FROM skys_members WHERE island_id = <id_ostrova z predchoziho vysledku>
+ (4) UPDATE skys_islands SET nick = '<main_nick>', date = <current unix time>, active = 1 WHERE id = <id_predchoziho vysledku> LIMIT 1
+-- pokud dotaz c. 2 vrati 0 vysledku:
+--- Provedeni dotazu:
+ (5) INSERT INTO skys_islands
+     (`nick`, `x`, `z`, `date`)
+     VALUES
+     ('<main_nick>', <x>, <z>, <curent unix time>);
+
+
+
+-- vyresetovani ostrova pres worldedit (//set 0 na cele rozmezi, nebo //paste s urcitym schematickem). Vyresetovani proto, ze jiz na tomto miste nekdo mohl stavet, jelikoz zde neni zadna ochrana.
+-- vytvoreni ochrany pres worldguard, nastaveni hlasky
+-----------------------------------
+/sb replace
+ SELECT `id` 
+ FROM skys_islands 
+ WHERE `nick` = '<main_nick>';
+- pokud je vysledek 0
+-- vypis hlasku ze zadny ostrov nema, musi si jej zalozit pres /sb new
+- pokud je vysledek 1:
+-- vyresetovani ostrova pres worldedit (//set 0 na cele rozmezi, nebo //paste s urcitym schematickem).
+-----------------------------------
+/sb delete
+ SELECT `id` 
+ FROM skys_islands
+ WHERE `nick` = '<main_nick>';
+- pokud je vysledek 0
+-- vypis hlasku ze zadny ostrov nema a tudiz nema co smazat
+- pokud je vysledek 1:
+-- Provedeni dotazu:
+UPDATE skys_islands SET
+ `active` = 0
+ WHERE `nick` = '<main_nick>';
+-- vyresetovani ostrova pres worldedit (//set 0 na cele rozmezi, nebo //paste s urcitym schematickem).
+-----------------------------------
+/sb home
+ SELECT islands.id, islands.nick, islands.x, islands.z 
+ FROM skys_islands islands
+ WHERE islands.nick = '<main_nick>';
+------------------------------------
+/sb home <nick>
+------
+verze 1: muze teleportovat nebo ne, nelze rozlisit jaka nastala chyba
+ SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, members.id, members.island_id, members.member
+ FROM skys_islands islands
+ LEFT JOIN skys_members members ON islands.id = members.island_id 
+ WHERE islands.nick = '<nick>'
+  AND members.member = '<main_nick>'
+  AND islands.active = 1
+  LIMIT 1;
+Pokud vrati 0 vysledku, nelze teleportovat
+Pokud vrati 1 vysledek, lze teleportovat
+------
+SQL verze 2: zjisteni info o hraci, na ktery se chce teleportovat a podle vypisu vyfiltrovat jestli se tam muze teleportovat pripadne jaka chyba nastala
+  SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, members.id, members.island_id, members.member
+  FROM skys_islands islands
+  LEFT JOIN skys_members members ON islands.id = members.island_id 
+  WHERE islands.nick = '<nick>'
+- Pokud vrati 0 vysledku, nick neexistuje
+- Pokud vrati vice vysledku nez 0
+-- pokud je islands.active = 0
+--- hlaska: Hrac neni aktivni.
+-- nebo jestli je islands.active = 1
+--- je potreba, aby dotaz probehl a prubezne prohledaval, jestli se nick, ktery spustil prikaz, nachazi ve sloupci members.member
+---- pokud se nekde bude nachazet
+      muze probehnout teleport
+---- pokud nikde nebude nachazet,
+      nelze se teleportovat, neni clenem ostrova
+------------------------------------
+/sb list
+ SELECT islands.id, islands.nick, islands.x, islands.z, members.id, members.island_id, members.member
+ FROM skys_islands islands
+ LEFT JOIN skys_members members ON islands.id = members.island_id 
+ WHERE members.member = '<main_nick>';
+
+Vrati seznam nicku ostrovu, na ktere ma hrac <main_nick> prava
+Pokud vrati 0, neni clenem zadneho ostrova
+
+------------------------------------
+/sb members
+ SELECT member
+ FROM skys_members
+ WHERE island_id = '<main_island_id>';
+
+Vrati seznam nicku, kdo ma pravo na muj ostrov.
+Pokud vrati 0, nikdo dalsi na muj ostrov nema pravo
+
+------------------------------------
+/sb add <nick>
+
+Ověřit, jestli odesílatel příkazu je stejný nick, jako parametr <nick>.
+Pokud ano, oznámí to hlášku, že přidat sám sebe nelze.
+Jinak pokračovat dále.
+
+ SELECT id
+ FROM skys_islands 
+ WHERE nick = '<main_nick>';
+vysledek tohoto ulozit do promenne <main_island_id>
+
+ SELECT nick 
+ FROM skys_members
+ WHERE island_id = '<main_island_id>' 
+  AND member = '<nick>';
+- pokud vrati 1:
+-- jiz je pridany
+- pokud vrati 0:
+-- provede se dotaz
+ INSERT INTO 
+ skys_members (`island_id`, `member`) VALUES ('<main_island_id>' ,'<nick>');
+------------------------------------
+/sb remove <nick>
+
+ SELECT id
+ FROM skys_islands
+ WHERE nick = '<main_nick>';
+  vysledek tohoto ulozit do promenne <main_island_id>
+
+ SELECT nick
+ FROM skys_members 
+ WHERE island_id = '<main_island_id>' insert
+  AND member = '<nick>';
+- pokud vrati 1:
+-- provede se dotaz (odebere se nick)
+ DELETE FROM skys_members 
+ WHERE island_id = '<main_island_id>' 
+  AND member = '<nick>';
+- pokud vrati 0:
+-- jiz tam neni / jeste tam neni
