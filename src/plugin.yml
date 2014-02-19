@@ -1,0 +1,16 @@
+name: SimpleSkyblock
+main: eu.mcminers.drali.SimpleSkyblock
+version: 1.1
+description: skyIsland SMP mod. Survive on a small island in the sky with only basic supplies. Try to beat the challenges.
+softdepend: [CleanroomGenerator]
+depend: [Vault, WorldGuard]
+author: drali_ (based on code by Talabrek (based on code by Qgel))
+commands:
+    sbtest:
+        description: sbtest command!
+        usage:  |
+            /sb [smthng]
+    sbadmin:
+        description: sbadmin command!
+        usage:  |
+            /sb [smthng]

@@ -1,0 +1,100 @@
+CHANGELOG:
+
+0-2:
+sb friend hází null
+změnit příkaz ze sb na něco jiného (sbtest, za účelem testování)
+
+0-3:
+přidat warp na středový ostrov
+text: command.new.... je nesmyslný, upravit
+v configu změnit "en" na "default"
+při použití sb home vlastninick odstranit nick a postupovat jako při sb home
+když hráč nemá právo, nevykoná se dotaz
+sb friend list už zas funguje (později se ukazuje, že ne uplně)
+
+O-4:
+opraveno sbhome frind s vlastnim nickem (byly tam uvozovky....)
+opraveno sbfriendhome, kde byl nick místo regex
+opraveno sql dotaz u sbfriendhome, chybela podminka o player.getName()
+další pokus o opravu friend list
+výpis hráčů v friend list na jecnu řádku, ne pod sebe
+pokus o opravu odkazování z home na new apod...
+
+0-5
+opraven výpis prázdného řádku při sb friend home
+opraveno: (chyba byla v pozustatku stareho kodu pri prevadeni dotazu az za kontrolu prav)
+- po zadani aktivace hlaska- Nemas ostrov, zadat new 
+- po zadani new hlaska- mas ostrov, pouzij home 
+- po zadani home hlaska - ostrov neaktivni zadej active 
+
+0-6
+pokusy o opravu sb home <nick>
+mazani invu bylo přesunuto az za teleport (pri mazani ostrova)
+
+0-7
+opraven teleport na sprateleny ostrov (chyba byla v tom, ze tam byl navic jeden while(rs.next()){...}
+
+0-8
+zmeněna velikost "i" v friend remove z regionu (pokus o opraveni chyby)
+
+0-9
+změněna velikost "i" v freind add (pokus o opraveni chyby)
+
+1-0
+opraven sb home friend (chyba vznikla pridanim podminky ve verzi 0-4)
+opraveni chyby v friend add a remove (vznikla, kdyz byl region nahodou smazan, ale ne pres skyblock)
+
+1-1
+pridan teleport pritomnych hracu na spawn pri resetu/deaktivaci ostrova
+informovat hrace, pokud si ho nekdo pridal na ostrov/odebral z ostrova\s
+hlaska admin.sql.connecting zmenena z warning na severe
+opraveny hnusne chyby zpusobene neexistenci slozky s preklady pri prvnim spusteni
+upravit cs hlasku Teleportuji... za Teleport probiha...
+pridany preklady (NUTNO NAHRAT Z DROPBOXU, jinak to bude vypisovat hracum chyby)
+
+1-2
+pokus o opravení chyby, pokud ostrov nema nikoho pridaneho (pri cteni nicku to vracelo null, i kdyz dotaz neco vratil)
+
+1-5
+chyba s null ve verzi 1-2 konecne opravena
+
+1-6 
+opraveno: text při odebírání hráče se sice napíše, ale mě... ne hráči, kterého odebírám
+nahrazeno: v sb home friend je v dowhile navic jeden boolean, slo by to nahradit za return;
+pridano: při nezadání parametru/spatneho parametru vypsat nápovědu
+
+1-7
+pridan case sensitive check (aby se zamezilo duplicitam v friend)
+upraveno odebiraci hlasky (pokud nebyl pridan, stejne ji to vypisovalo)
+
+1-8
+zapisy a hledani v databazi friend bylo vse zmeneno toLowerCase
+
+1-9
+cisla itemu zmenena na materialy (0 na Material.AIR etc...)
+
+2.0
+knihovna Bukkitu nahrazena za novou (Bukkit-1.7.2-R0.3.jar)
+(testovací server rovnez presunut na 1-7-2 beta build)
+změna knihovny i testovacího serveru na Bukkit-1.7.2-R0.2.jar (běží na tom i hlavní server)
+generování stromu je nyní dělané přes World.generateTree())
+přidat sb friend clear (odstranění všech přátel)
+
+
+TODO:
+dvojitý port (z jiného světa) způsobuje nefunkčnost /b
+při deaktivaci ostrova ostatni porad vidi, ze tam maji pravo, dokud si ostrov nezabere nekdo jiny (mozna upravit, mozna nechat)
+přidat sb friend clear (odstranění všech přátel)
+zkontrolovat, co příkazy vrací (aby se nevypisovala nápověda z plugin.yml)
+za záhadných okolností mizí regiony a plugin si s tím neví rady (přidat kontrolu regionu a pripisovani - pravdepodobne pri startu)
+pridat moznost vypsani prav jineho hrace (sb friend list nick)
+rozdělit nápovědu na část pro friend a ostatní a vypisovat jen části
+
+check if the two queries in sb add could be joined together
+- když je někde nad bedrockem láva, portne to do ní
+- vrchní blok dřeva u stromu je natočený jinak (jednou se mi dokonce podařilo, že se mi vygeneroval strom, který měl listy všech typů :D) 
+- úprava flagu regionu (bude) 
+- upravit některé hlášky v nápovědě.
+po přesunu bloku pistem do resky spawnu se blok posune ale uz nejde znicit
+- když se kdykoli maže inventář (reset ostrova, delete ostrova), nesmaže se brnění
+Pozn: nějak nastala chyba, že se nějak smazal region od hráče Myrtha, ale nevytvořil se znovu...

@@ -1,0 +1,53 @@
+# height at which islands are generated
+# will affect only islands that are newly generated, not the old ones
+island-height: 190
+
+# size of each island's protected area
+# DO NOT CHANGE THIS if some islands are already on the map
+# changing this can make some islands generate over others or delete them entirely
+island-size: 100
+
+# free unprotected zone between islands
+# DO NOT CHANGE THIS if some islands are already on the map
+# changing this can make some islands generate over others or delete them entirely
+island-spacing: 20
+
+# coordinates of Skyblock spawn
+# players are teleported to these coordinates after their island is deleted
+spawn-x: 0
+spawn-z: 0
+
+# plugin checks if there is a solid block on the spawn point and generates 3*3 stone ramp if needed
+generate-spawn-island: TRUE
+
+# this region protects an area of the same size as an island, it is in the center of the world
+generate-spawn-region: TRUE
+
+world-name: skyworld
+
+# setting debug to true will show SQL queries, extended errors etc..
+debug: TRUE
+
+# the minimal time between island resets (so players do not misuse this) - in seconds
+# not implemented yet
+island-reset-cooldown: 3600
+
+# hardcore gamemode deletes the island after player's death (including player's inventory)
+# TODO: make this seperate for each player to choose
+hardcore: FALSE
+
+language:
+  use: default
+  highlight: '&4'
+  base: '&a'
+  notice: '&2'
+
+# SQL database data
+# put your database data in here
+mysql:
+  ip: hostname
+  port: 3306
+  database: db-name
+  user: user
+  pass: pass
+  table-prefix: skys
