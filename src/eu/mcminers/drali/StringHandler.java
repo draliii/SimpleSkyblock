@@ -3,8 +3,6 @@ package eu.mcminers.drali;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -236,6 +234,7 @@ public class StringHandler {
 
 
     defaultStrings.put("command.error.noparameters", "No parameters given");
+    defaultStrings.put("command.error.unknown", "Unknown command. Use /sb help to see the help");
     defaultStrings.put("command.error.unknownparameter", "Parameter not found");
     defaultStrings.put("command.error.noisland", "You don't have an island. To create one, use /sb new");
 
