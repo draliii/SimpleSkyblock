@@ -79,7 +79,11 @@ knihovna Bukkitu nahrazena za novou (Bukkit-1.7.2-R0.3.jar)
 změna knihovny i testovacího serveru na Bukkit-1.7.2-R0.2.jar (běží na tom i hlavní server)
 generování stromu je nyní dělané přes World.generateTree())
 přidat sb friend clear (odstranění všech přátel)
+přidán softdepend na multiverse
 
+2.1
+výpis command.addfriend.starting byl přesunut tak, aby se nezobrazoval v případě, že už je dotyčný přidaný
+hledání v databázi nyní používá LOWER(), aby mohly být nicky porovnávány case insensitive a zároveň byla zachována velikost písma při výpisu
 
 TODO:
 dvojitý port (z jiného světa) způsobuje nefunkčnost /b
