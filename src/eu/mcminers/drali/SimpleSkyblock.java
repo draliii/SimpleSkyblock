@@ -285,6 +285,8 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   public void skyTp(int x, int z, Player player) {
+    //maybe use this?
+    //https://github.com/essentials/Essentials/blob/master/Essentials/src/net/ess3/utils/LocationUtil.java
     int h = pluginConfig.getInt(CONF_ISLAND_Y);
 
     //check until two safe blocks (air) are found
@@ -298,11 +300,12 @@ public class SimpleSkyblock extends JavaPlugin {
     }
 
     skyworld.loadChunk(x, z);
-
-    if (player.getWorld() != this.skyworld) {//teleport twice if teleporting from another world (otherwise it teleports unsafely)
-      player.teleport(new Location(skyworld, x, h, z));
-    }
-
+    /* This seems to not be needed in the newer bukkit (1-7-2)
+     * if (player.getWorld() != this.skyworld) {//teleport twice if teleporting from another world (otherwise it teleports unsafely)
+     *   player.teleport(new Location(skyworld, x, h, z));
+     * }
+     */
+    
     //add 0.5 to x and z, so the player gets teleported in the middle of a block
     //do h - 0.5 so the player stands on the ground and doesn't levitate (his head might gt stuck in something)
     player.teleport(new Location(skyworld, (x + 0.5), (h), (z + 0.5)));
