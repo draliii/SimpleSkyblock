@@ -305,7 +305,7 @@ public class SimpleSkyblock extends JavaPlugin {
      *   player.teleport(new Location(skyworld, x, h, z));
      * }
      */
-    
+
     //add 0.5 to x and z, so the player gets teleported in the middle of a block
     //do h - 0.5 so the player stands on the ground and doesn't levitate (his head might gt stuck in something)
     player.teleport(new Location(skyworld, (x + 0.5), (h), (z + 0.5)));
@@ -380,6 +380,10 @@ public class SimpleSkyblock extends JavaPlugin {
 
   public void clearInventory(Player player) {
     player.getInventory().clear();
+    player.getInventory().setHelmet(null);
+    player.getInventory().setChestplate(null);
+    player.getInventory().setLeggings(null);
+    player.getInventory().setBoots(null);
     List<Entity> Entities = player.getNearbyEntities(15, 15, 15);
     //15 blocks is enough, because any other blocks will fall to Void
     Iterator<Entity> ent = Entities.iterator();
