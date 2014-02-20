@@ -204,11 +204,11 @@ public class IslandTools {
     blockToChange.setType(Material.BEDROCK);
 
     //sand
-    blockToChange = world.getBlockAt(x + 2, y + 1, z + 1);
+    blockToChange = world.getBlockAt(x + 2, y + 1, z + 4);
     blockToChange.setType(Material.SAND);
-    blockToChange = world.getBlockAt(x + 2, y + 1, z + 2);
+    blockToChange = world.getBlockAt(x + 1, y + 1, z + 4);
     blockToChange.setType(Material.SAND);
-    blockToChange = world.getBlockAt(x + 2, y + 1, z + 3);
+    blockToChange = world.getBlockAt(x + 1, y + 1, z + 3);
     blockToChange.setType(Material.SAND);
 
   }
