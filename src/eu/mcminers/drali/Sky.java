@@ -224,7 +224,7 @@ public class Sky implements CommandExecutor {
                 + "FROM " + plugin.getMysqlPrefix() + "_islands islands "
                 + "LEFT JOIN " + plugin.getMysqlPrefix() + "_members members "
                 + "ON islands.id = members.island_id "
-                + "WHERE islands.nick = '" + visited + "';";
+                + "WHERE LOWER(islands.nick) = LOWER('" + visited + "');";
         ResultSet rs = plugin.database.querySQL(sql);
         //no results found (the visited nick doesn't exist)
         if (!(rs.next())) {
@@ -486,7 +486,6 @@ public class Sky implements CommandExecutor {
         //load island data
         Island island = plugin.getPlayerData(player);
         RegionTools rTools = new RegionTools(plugin);
-        player.sendMessage(plugin.out.format("command.addfriend.starting", friend));
 
         //add him as region member (nothing happens if he is added already)
         ProtectedRegion region = rTools.getWorldGuard().getRegionManager(plugin.skyworld).getRegion(player.getName() + "island");
@@ -495,7 +494,7 @@ public class Sky implements CommandExecutor {
         region.setMembers(members);
 
         //check if the player isn't added already
-        String checkMember = "SELECT member FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + island.id + "' AND member = '" + friend.toLowerCase() + "';";
+        String checkMember = "SELECT member FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + island.id + "' AND LOWER(member) = LOWER('" + friend + "');";
         ResultSet rs = plugin.database.querySQL(checkMember);
 
         if (rs.next()) {
@@ -503,8 +502,9 @@ public class Sky implements CommandExecutor {
         }
         //add him to the database
         else {
+          player.sendMessage(plugin.out.format("command.addfriend.starting", friend));
           //player.sendMessage("Database:");
-          String addMember = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`) VALUES ('" + island.id + "', '" + friend.toLowerCase() + "');";
+          String addMember = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`) VALUES ('" + island.id + "', '" + friend + "');";
           //remove him from the database
           int queriesCount = plugin.database.updateSQL(addMember);
           //player.sendMessage("QueriesCount:" + queriesCount);
@@ -548,7 +548,7 @@ public class Sky implements CommandExecutor {
 
         //check if the player is added already
         //remove him from the database (nothing happens if he isn't there)
-        String deleteMember = "DELETE FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + island.id + "' AND member = '" + friend.toLowerCase() + "';";
+        String deleteMember = "DELETE FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + island.id + "' AND LOWER(member) = LOWER('" + friend + "');";
         int deletedRows = plugin.database.updateSQL(deleteMember);
 
         if (deletedRows != 0) {
@@ -601,7 +601,7 @@ public class Sky implements CommandExecutor {
               + "FROM " + plugin.getMysqlPrefix() + "_islands islands "
               + "LEFT JOIN " + plugin.getMysqlPrefix() + "_members members "
               + "ON islands.id = members.island_id "
-              + "WHERE members.member = '" + player.getName() + "';";
+              + "WHERE LOWER(members.member) = LOWER('" + player.getName() + "');";
       ResultSet rs = plugin.database.querySQL(visitableIslands);
       if (rs.next()) {
         player.sendMessage(plugin.out.get("command.listfriend.other"));
