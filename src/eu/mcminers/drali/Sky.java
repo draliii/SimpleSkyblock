@@ -559,10 +559,11 @@ public class Sky implements CommandExecutor {
             //if he is found, teleport him out
             if (visitors[i].getName().equalsIgnoreCase(friend)) {
               plugin.skyTp(0, 0, visitors[i]);
+              plugin.skyTp(0, 0, visitors[i]);
             }
           }
           player.sendMessage(plugin.out.format("command.removefriend.starting", friend));
-          
+
           //inform the player that he was removed
           for (Player p : plugin.getServer().getOnlinePlayers()) {
             //check nick
@@ -634,6 +635,15 @@ public class Sky implements CommandExecutor {
       Island island = plugin.getPlayerData(player);
       String deleteFriends = "DELETE FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + island.id + "';";
       int deletedRows = plugin.database.updateSQL(deleteFriends);
+      Player[] visitors = plugin.getPlayersOnIsland(island.x, island.z);
+      //look in the array for his nick
+      for (int i = 0; i < visitors.length; i++) {
+        //if he is found, teleport him out
+        if (!visitors[i].getName().equalsIgnoreCase(player.getName())) {
+          plugin.skyTp(0, 0, visitors[i]);
+          plugin.skyTp(0, 0, visitors[i]);
+        }
+      }
       switch (deletedRows) {
         case 0:
           player.sendMessage(plugin.out.get("command.clearfriends.zero"));
