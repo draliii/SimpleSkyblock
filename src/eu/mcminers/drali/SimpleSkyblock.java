@@ -229,7 +229,7 @@ public class SimpleSkyblock extends JavaPlugin {
    * @return true if player's island is in the file
    */
   public boolean hasIsland(final Player player) throws SQLException {
-    String sql = "SELECT `id` FROM " + this.mysqlPrefix + "_islands WHERE `nick` = '" + player.getName() + "' LIMIT 1;";
+    String sql = "SELECT `id` FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1;";
     ResultSet res = this.database.querySQL(sql);
     if (res.next()) {
       return true;
@@ -317,7 +317,7 @@ public class SimpleSkyblock extends JavaPlugin {
    */
   public Island getPlayerData(Player player) throws SQLException {
 
-    String sql = "SELECT id, x, z, nick, date, active FROM " + this.mysqlPrefix + "_islands WHERE nick = '" + player.getName() + "' LIMIT 1";
+    String sql = "SELECT id, x, z, nick, date, active FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1";
     ResultSet rs = database.querySQL(sql);
 
     if (rs.next()) {
