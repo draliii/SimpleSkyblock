@@ -38,8 +38,7 @@ public class Sky implements CommandExecutor {
     Player player = (Player) sender;
 
     if (args.length == 0) {
-      player.sendMessage(plugin.out.get("command.error.noparameters"));
-      plugin.displayHelp(player);
+      player.sendMessage(plugin.out.get("command.error.unknown"));
       return true;
     }
     else if (args[0].equalsIgnoreCase("help")) {
@@ -103,8 +102,7 @@ public class Sky implements CommandExecutor {
               friend = null;
             }
             if (args.length == 1) {
-              player.sendMessage(plugin.out.get("command.error.noparameters"));
-              plugin.displayHelp(player);
+              player.sendMessage(plugin.out.get("command.error.unknown"));
               return true;
             }
             switch (args[1]) {
@@ -121,15 +119,13 @@ public class Sky implements CommandExecutor {
                 cmdFriendList(player);
                 break;
               default:
-                player.sendMessage(plugin.out.get("command.error.unknownparameter"));
-                plugin.displayHelp(player);
+                player.sendMessage(plugin.out.get("command.error.unknown"));
                 break;
             }
             break;
 
           default:
-            player.sendMessage(plugin.out.get("command.error.unknownparameter"));
-            plugin.displayHelp(player);
+            player.sendMessage(plugin.out.get("command.error.unknown"));
             break;
         }
         //after the switch
