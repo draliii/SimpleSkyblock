@@ -510,7 +510,7 @@ public class Sky implements CommandExecutor {
           //player.sendMessage("QueriesCount:" + queriesCount);
 
           //inform the player that he was added
-          for (Player p : plugin.skyworld.getPlayers()) {
+          for (Player p : plugin.getServer().getOnlinePlayers()) {
             //check nick
             if (p.getName().equalsIgnoreCase(friend)) {
               p.sendMessage(plugin.out.format("command.addfriend.friend", player.getName()));
@@ -559,10 +559,17 @@ public class Sky implements CommandExecutor {
             //if he is found, teleport him out
             if (visitors[i].getName().equalsIgnoreCase(friend)) {
               plugin.skyTp(0, 0, visitors[i]);
-              visitors[i].sendMessage(plugin.out.format("command.removefriend.nolongerfriend", player.getName()));
             }
           }
           player.sendMessage(plugin.out.format("command.removefriend.starting", friend));
+          
+          //inform the player that he was removed
+          for (Player p : plugin.getServer().getOnlinePlayers()) {
+            //check nick
+            if (p.getName().equalsIgnoreCase(friend)) {
+              p.sendMessage(plugin.out.format("command.removefriend.nolongerfriend", player.getName()));
+            }
+          }
         }
         else {
           player.sendMessage(plugin.out.format("command.removefriend.alreadyremoved", friend));
