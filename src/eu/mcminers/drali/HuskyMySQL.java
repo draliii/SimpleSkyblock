@@ -93,6 +93,9 @@ public class HuskyMySQL extends HuskyDatabase {
 
     if (checkConnection()) {
       c = getConnection();
+      if(c == null){
+        c = openConnection();
+      }
     }
     else {
       c = openConnection();
@@ -125,6 +128,9 @@ public class HuskyMySQL extends HuskyDatabase {
 
     if (checkConnection()) {
       c = getConnection();
+      if(c == null){
+        c = openConnection();
+      }
     }
     else {
       c = openConnection();
