@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 
 /**
  * Connects to and uses a MySQL database
@@ -88,67 +87,66 @@ public class HuskyMySQL extends HuskyDatabase {
   }
 
   public ResultSet querySQL(String query) {
-    plugin.print("admin.sql.query", true, "info", query);
+    /*
+    //plugin.print("admin.sql.query", true, "info", query);
     Connection c = null;
 
+    //plugin.debug("checking connection", "info");
     if (checkConnection()) {
+      //plugin.debug("connection found", "info");
       c = getConnection();
-      if(c == null){
+      if (c == null) {
+        //plugin.debug("connection is null, opening a new one", "info");
         c = openConnection();
       }
     }
     else {
+      //plugin.debug("connection not found, opening a new one", "info");
       c = openConnection();
-    }
+    }*/
 
     Statement s = null;
+    ResultSet ret = null;
 
     try {
-      s = c.createStatement();
+      s = openConnection().createStatement();
+      ret = s.executeQuery(query);
     }
     catch (SQLException e1) {
       e1.printStackTrace();
     }
-
-    ResultSet ret = null;
-
-    try {
-      ret = s.executeQuery(query);
-    }
-    catch (SQLException e) {
-      e.printStackTrace();
-    }
-    //closeConnection(); in my case, I don't want to close the connection, because I use it often
+    closeConnection();
     return ret;
   }
 
   public int updateSQL(String sql) {
+    /*
     plugin.print("admin.sql.query", true, "info", sql);
     Connection c = null;
 
     if (checkConnection()) {
       c = getConnection();
-      if(c == null){
+      if (c == null) {
         c = openConnection();
       }
     }
     else {
       c = openConnection();
-    }
+    }*/
 
     Statement s = null;
     int result = -1;
 
     try {
-      s = c.createStatement();
+      s = openConnection().createStatement();
       result = s.executeUpdate(sql);
     }
     catch (SQLException e1) {
       e1.printStackTrace();
     }
 
-    plugin.print("admin.sql.queryrows", true, "info", result);
+    //plugin.print("admin.sql.queryrows", true, "info", result);
+    closeConnection();
     return result;
-    //closeConnection(); in my case, I don't want to close the connection, because I use it often
   }
 }
