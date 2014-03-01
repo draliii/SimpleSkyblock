@@ -9,6 +9,9 @@ package eu.mcminers.drali;
  * @author -_Husky_- Database connection API
  * @author DJTommek MySQL queries
  */
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import com.onarandombox.MultiverseCore.utils.WorldManager;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.util.*;
@@ -158,8 +161,17 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //load the skyworld
     this.print("admin.world.loading", true, "info");
-    skyworld = this.getServer().getWorld(worldName);
-
+    /*
+    MultiverseCore mvc = this.getMvCore();
+    //if Multiverse doesnt exist, load the world normally
+    if(mvc == null){
+      skyworld = this.getServer().getWorld(worldName);
+    }
+    else{
+      WorldManager wm = new WorldManager(mvc);
+      MultiverseWorld world = wm.getMVWorld("world_sgames");
+    }*/
+      skyworld = this.getServer().getWorld(worldName);
     //if the world wasn't loaded
     if (skyworld == null) {
       this.print("admin.world.fail", false, "severe", skyworld.getName());
@@ -618,5 +630,21 @@ public class SimpleSkyblock extends JavaPlugin {
       }
     }
     return result.toArray(new Player[0]);
+  }
+
+  /**
+   * Retunrs the instance of MultiverseCore (if there is no such plugin on the server, null is returned)
+   * @return MultiverseCore or null
+   */
+  public MultiverseCore getMvCore() {
+    Plugin plugin = this.getServer().getPluginManager().getPlugin("Multiverse-Core");
+
+    if (plugin instanceof MultiverseCore) {
+      return (MultiverseCore) plugin;
+    }
+
+    else{
+      return null;
+    }
   }
 }
