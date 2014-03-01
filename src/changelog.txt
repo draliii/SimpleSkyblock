@@ -79,26 +79,36 @@ knihovna Bukkitu nahrazena za novou (Bukkit-1.7.2-R0.3.jar)
 změna knihovny i testovacího serveru na Bukkit-1.7.2-R0.2.jar (běží na tom i hlavní server)
 generování stromu je nyní dělané přes World.generateTree())
 přidat sb friend clear (odstranění všech přátel)
-přidán softdepend na multiverse
+přidán softdepend na multiverse (ukazuje se, že to nic neřeší)
 
 2.1
 výpis command.addfriend.starting byl přesunut tak, aby se nezobrazoval v případě, že už je dotyčný přidaný
 hledání v databázi nyní používá LOWER(), aby mohly být nicky porovnávány case insensitive a zároveň byla zachována velikost písma při výpisu
+dvojitý port (z jiného světa) způsobuje nefunkčnost /b -> byl zakomentován, zdá se, že už není třeba
+přimazání inventáře (reset ostrova, delete ostrova) se smaže i brnění
+při odebírání/přidávání hráčů se jim hláška zobrazí i na jiných světech
+
+2.2
+při odebírání všech hráčů jsou všichni teleportováni pryč
+teleport hráče pryč po odebrání z ostrova se dělá dvakrát (aby se zabránilo použití /back)
+upraveno umístění písku na ostrově
+nevypisovat vždy celou nápovědu
+přidán softdepend na Multiverse-Core (řeší chybu s nenačtením světa)
+
+2.3
+do huskymysql byla přidána kontrola připojení (pokud není, připojí se znovu)
+předchozí opatření je nefunkční, bylo opraveno (spojení se otevírá přímo)
+
 
 TODO:
-dvojitý port (z jiného světa) způsobuje nefunkčnost /b
-při deaktivaci ostrova ostatni porad vidi, ze tam maji pravo, dokud si ostrov nezabere nekdo jiny (mozna upravit, mozna nechat)
-přidat sb friend clear (odstranění všech přátel)
-zkontrolovat, co příkazy vrací (aby se nevypisovala nápověda z plugin.yml)
-za záhadných okolností mizí regiony a plugin si s tím neví rady (přidat kontrolu regionu a pripisovani - pravdepodobne pri startu)
 pridat moznost vypsani prav jineho hrace (sb friend list nick)
-rozdělit nápovědu na část pro friend a ostatní a vypisovat jen části
-
-check if the two queries in sb add could be joined together
 - když je někde nad bedrockem láva, portne to do ní
-- vrchní blok dřeva u stromu je natočený jinak (jednou se mi dokonce podařilo, že se mi vygeneroval strom, který měl listy všech typů :D) 
-- úprava flagu regionu (bude) 
-- upravit některé hlášky v nápovědě.
+- upravit některé hlášky v nápovědě.... které?
+
+Momentálně nebudu řešit:
+zkontrolovat, co příkazy vrací (aby se nevypisovala nápověda z plugin.yml) -> nikde to nevidím...
+úprava flagu regionu (bude) 
 po přesunu bloku pistem do resky spawnu se blok posune ale uz nejde znicit
-- když se kdykoli maže inventář (reset ostrova, delete ostrova), nesmaže se brnění
-Pozn: nějak nastala chyba, že se nějak smazal region od hráče Myrtha, ale nevytvořil se znovu...
+check if the two queries in sb add could be joined together
+za záhadných okolností mizí regiony a plugin si s tím neví rady (přidat kontrolu regionu a pripisovani - pravdepodobne pri startu)
+při deaktivaci ostrova ostatni porad vidi, ze tam maji pravo, dokud si ostrov nezabere nekdo jiny (mozna upravit, mozna nechat)
