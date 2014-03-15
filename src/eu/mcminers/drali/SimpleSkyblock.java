@@ -55,7 +55,8 @@ public class SimpleSkyblock extends JavaPlugin {
   private static final String CONF_MYSQL_PREFIX = "mysql.table-prefix";
   private static final String CONF_DEBUG = "debug";
   private static final String CONF_HARDCORE = "hardcore";
-  private static final String CONF_LANGUAGE = "language.use";
+  private static final String CONF_LANGUAGE = "delete-visitor-inventory";
+  private static final String CONF_DELETE_VISITOR_INV = "language.use";
   private static final String CONF_LANGUAGE_HIGHLIGHT = "language.highlight";
   private static final String CONF_LANGUAGE_BASE = "language.base";
   private static final String CONF_LANGUAGE_NOTICE = "language.notice";
@@ -78,6 +79,7 @@ public class SimpleSkyblock extends JavaPlugin {
   public int resetCooldown;
   private boolean debug;
   public boolean hardcore;
+  public boolean deleteVisitorInv;
   public String language;
   public String languageHighlight;
   public String languageBase;
@@ -532,6 +534,7 @@ public class SimpleSkyblock extends JavaPlugin {
     mysqlPrefix = pluginConfig.getString(CONF_MYSQL_PREFIX);
     debug = pluginConfig.getBoolean(CONF_DEBUG);
     hardcore = pluginConfig.getBoolean(CONF_HARDCORE);
+    deleteVisitorInv = pluginConfig.getBoolean(CONF_DELETE_VISITOR_INV);
     language = pluginConfig.getString(CONF_LANGUAGE);
     languageBase = pluginConfig.getString(CONF_LANGUAGE_BASE);
     languageHighlight = pluginConfig.getString(CONF_LANGUAGE_HIGHLIGHT);
@@ -603,6 +606,9 @@ public class SimpleSkyblock extends JavaPlugin {
     for (int i = 0; i < visitors.length; i++) {
       //teleport players to center point
       this.skyTp(0, 0, visitors[i]);
+      if(this.deleteVisitorInv){
+        this.clearInventory(visitors[i]);
+      }
     }
   }
 

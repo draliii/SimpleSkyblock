@@ -97,7 +97,14 @@ přidán softdepend na Multiverse-Core (řeší chybu s nenačtením světa)
 
 2.3
 do huskymysql byla přidána kontrola připojení (pokud není, připojí se znovu)
+
+2.4
 předchozí opatření je nefunkční, bylo opraveno (spojení se otevírá přímo)
+
+2.5
+pridano nastavitelne mazani inventaru navstevniku pri resetu/delete ostrova
+pri re-aktivaci ostrova se znovu obnoví members z databáze
+
 
 
 TODO:

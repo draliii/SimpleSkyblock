@@ -446,9 +446,10 @@ public class Sky implements CommandExecutor {
       else {
         //set it to active in the database
         iTools.activateIsland(player.getName());
-        //make a new WorldGuard region, too (since it had to be deleted when setting the island to inactive)
-        //find a better way to deal with inactive regions
-        rTools.createRegion(island.x, island.z, player);
+        
+        //make a new region and restore the previous player settings
+        rTools.restorePerms(rTools.createRegion(island.x, island.z, player), island.id);
+        
         //teleport to home
         island = plugin.getPlayerData(player);
         player.sendMessage(plugin.out.get("command.active.finished"));
