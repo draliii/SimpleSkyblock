@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,8 +44,11 @@ public class RegionTools {
     return region;
   }
 
-  public void createRegion(int x, int z, Player player)
-          throws ProtectedRegion.CircularInheritanceException, InvalidFlagFormat, SQLException, ProtectionDatabaseException {
+  public ProtectedRegion createRegion(int x, int z, Player player)
+          throws ProtectedRegion.CircularInheritanceException,
+                 InvalidFlagFormat,
+                 SQLException,
+                 ProtectionDatabaseException {
 
     //work with RegionManager (code is nicer that way)
     RegionManager regionManager = this.getWorldGuard().getRegionManager(plugin.skyworld);
@@ -82,12 +86,14 @@ public class RegionTools {
       //save the RegionManager (otherwise regions are deleted after server restart)
       plugin.print("plugin.region.saving", true, "info");
       regionManager.save();
+      return region;
 
     }
     //if there is already an island with player's name
     //this should never happen
     else {
       player.sendMessage("Your island is already protected!");
+      return null;
     }
   }
 
@@ -116,16 +122,29 @@ public class RegionTools {
     regionManager.save();
   }
 
-  /*
-  @Override
-  protected void finalize() throws Throwable {
-    //just an experiment :)
-    try {
-      plugin.debug("RegionTools was garbage-collected", "info");
-    }
-    finally {
-      super.finalize();
+  public void restorePerms(ProtectedRegion region, int islandId) throws SQLException {
+    String membersList = "SELECT member FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + islandId + "';";
+    ResultSet result = plugin.database.querySQL(membersList);
+
+    while (result.next()) {
+      DefaultDomain members = new DefaultDomain();
+      while (result.next()) {
+        members.addPlayer(result.getString("member"));
+      }
+      region.setOwners(members);
     }
   }
-  */
+
+  /*
+   @Override
+   protected void finalize() throws Throwable {
+   //just an experiment :)
+   try {
+   plugin.debug("RegionTools was garbage-collected", "info");
+   }
+   finally {
+   super.finalize();
+   }
+   }
+   */
 }
