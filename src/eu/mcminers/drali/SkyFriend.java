@@ -1,22 +1,35 @@
 package eu.mcminers.drali;
 
-import com.sk89q.worldguard.domains.DefaultDomain;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 /**
  *
  * @author dita
  */
-public class SkyFriend implements CommandExecutor {
+public class SkyFriend {
 
+  
+  /*
+   * 
+   * 
+   * 
+   * 
+   * THIS CLASS ISN'T USED ANYMORE
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   *//*
   private final SimpleSkyblock plugin;
 
   public SkyFriend(SimpleSkyblock plugin) {
@@ -140,7 +153,7 @@ public class SkyFriend implements CommandExecutor {
                 + "WHERE members.member = '" + player.getName() + "';";
         ResultSet rs = plugin.database.querySQL(visitableIslands);
         /*
-         */
+         
         try {
           while (rs.next()) {
             player.sendMessage(rs.getString("nick"));
@@ -155,5 +168,5 @@ public class SkyFriend implements CommandExecutor {
         player.sendMessage("");
     }
     return false;
-  }
+  }*/
 }
