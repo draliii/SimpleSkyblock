@@ -86,36 +86,27 @@ public class HuskyMySQL extends HuskyDatabase {
     }
   }
 
-  public ResultSet querySQL(String query) {
+  public ResultSet querySQL(String query) throws SQLException {
 
     plugin.print("admin.sql.query", true, "info", query);
     Statement s = null;
     ResultSet ret = null;
 
-    try {
-      s = openConnection().createStatement();
-      ret = s.executeQuery(query);
-    }
-    catch (SQLException e1) {
-      e1.printStackTrace();
-    }
+    s = openConnection().createStatement();
+    ret = s.executeQuery(query);
+
     //closeConnection();
     return ret;
   }
 
-  public int updateSQL(String sql) {
+  public int updateSQL(String sql) throws SQLException {
 
     Statement s = null;
     plugin.print("admin.sql.query", true, "info", sql);
     int result = -1;
 
-    try {
-      s = openConnection().createStatement();
-      result = s.executeUpdate(sql);
-    }
-    catch (SQLException e1) {
-      e1.printStackTrace();
-    }
+    s = openConnection().createStatement();
+    result = s.executeUpdate(sql);
 
     //plugin.print("admin.sql.queryrows", true, "info", result);
     //closeConnection();

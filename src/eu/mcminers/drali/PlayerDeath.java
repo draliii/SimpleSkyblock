@@ -51,7 +51,12 @@ public class PlayerDeath implements Listener {
           }
           if (island.exists) {
 
-            island.reset();
+            try {
+              island.reset();
+            }
+            catch (Exception ex) {
+              
+            }
 
             player.sendMessage("Your island was reseted");
 

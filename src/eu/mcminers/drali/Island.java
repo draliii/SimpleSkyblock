@@ -158,7 +158,7 @@ public class Island {
     return false;
   }
 
-  public void addFriend(String playerName) {
+  public void addFriend(String playerName) throws SQLException {
     String addMember = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`)"
             + "VALUES ('" + this.id + "', '" + playerName + "');";
     //remove him from the database
@@ -168,7 +168,7 @@ public class Island {
     plugin.database.updateSQL(addMember);
   }
 
-  public boolean removeFriend(String playerName) {
+  public boolean removeFriend(String playerName) throws SQLException {
     if (this.isFriend(playerName)) {
       String deleteMember = "DELETE FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + this.id + "'"
               + "AND LOWER(member) = LOWER('" + playerName + "');";
@@ -178,7 +178,7 @@ public class Island {
     return false;
   }
 
-  public int removeAll() {
+  public int removeAll() throws SQLException {
     String deleteFriends = "DELETE FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + this.id + "';";
     int deletedRows = plugin.database.updateSQL(deleteFriends);
 
@@ -257,7 +257,7 @@ public class Island {
     return true;
   }
 
-  public void reset() {
+  public void reset() throws SQLException, Exception {
     this.date = System.currentTimeMillis() / 1000;
     //update database (reset date)
     String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
@@ -273,11 +273,7 @@ public class Island {
     IslandTools iTools = new IslandTools(plugin);
     iTools.generateIslandBlocks(this.x, this.z, this.ownerNick);
 
-    try {
-      plugin.clearInventory(owner);
-    }
-    catch (Exception e) {
-    }
+    plugin.clearInventory(owner);
     this.deleteItems();
   }
 

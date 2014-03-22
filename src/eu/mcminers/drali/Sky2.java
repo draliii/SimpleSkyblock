@@ -314,7 +314,7 @@ public class Sky2 implements CommandExecutor {
     }
   }
 
-  public void cmdReset(Player player) throws SQLException {
+  public void cmdReset(Player player){
     if (plugin.checkPerk(player, "simpleskyblock.sb.reset")) {
 
       //load island data
@@ -337,7 +337,12 @@ public class Sky2 implements CommandExecutor {
       else {
         player.sendMessage(plugin.out.get("command.reset.starting"));
 
+        try{
         island.reset();
+        }
+        catch(Exception e){
+          
+        }
 
         player.sendMessage(plugin.out.get("command.reset.finished"));
 
