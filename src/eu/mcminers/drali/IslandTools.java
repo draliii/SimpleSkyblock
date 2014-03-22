@@ -1,15 +1,10 @@
 package eu.mcminers.drali;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -28,91 +23,36 @@ public class IslandTools {
   }
 
   /**
-   * Checks for a place to generate an island (write data about island into
-   * database, delete data about previous owner).
-   *
-   * @param player the new owner of the island
-   * @throws SQLException
-   */
-  public boolean createIslandSQL(Player player) throws SQLException {
-    //get an abandoned island (closest to [0, 0])
-    int[] emptyIsland = plugin.getEmptyIsland();
-
-    //if the id is 0 (which can never happen in the table), it means that no empty islands (or no islands at all) were found
-    if (emptyIsland[0] == 0) {
-      //get x, z of the island with highest ID (the latest generated, on the edge of the grid)
-      int[] lastIsland = plugin.getLastIsland();
-      //look for coordinates of the next island to be generated
-      Island next = this.nextIslandLocation(lastIsland[0], lastIsland[1]);
-      //insert data about the island into database
-      String insert = "INSERT INTO " + plugin.getMysqlPrefix() + "_islands (`x`, `z`, `nick`, `date`)"
-              + "VALUES (" + next.x + ", " + next.z + ", '" + player.getName() + "', '" + System.currentTimeMillis() / 1000 + "');";
-      plugin.database.updateSQL(insert);
-    } //if an abandoned island was found
-    else {
-      //delete all players that could tphome to that island before
-      String deleteOldMembers = "DELETE FROM " + plugin.getMysqlPrefix() + "_members"
-              + " WHERE island_id = " + emptyIsland[0] + ";";
-      int rowsDeleted = plugin.database.updateSQL(deleteOldMembers);
-      plugin.debug("rows deleted: " + rowsDeleted, "info");
-
-      //get the previous owner's nick and delete the WG region
-      String previousPlayerSql = "SELECT `nick` FROM " + plugin.getMysqlPrefix() + "_islands WHERE id = '" + emptyIsland[0] + "';";
-      ResultSet rs = plugin.database.querySQL(previousPlayerSql);
-      if (rs.next()) {//if the query found something
-        //delete the region
-        String previousPlayer = rs.getString("nick");
-        RegionTools rTools = new RegionTools(plugin);
-        rTools.getWorldGuard().getRegionManager(plugin.skyworld).removeRegion(previousPlayer + "Island");
-        plugin.debug("Deleting region of " + previousPlayer, "info");
-      }
-      else {
-        plugin.debug("ERROR, inactive nick wasn't found", "severe");
-      }
-
-      //clear previous data (owner, date) and replace them with new data
-      String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
-              + " SET nick = '" + player.getName() + "', date = '" + System.currentTimeMillis() / 1000 + "', active = 1 "
-              + " WHERE id = " + emptyIsland[0]
-              + " LIMIT 1;";
-      int rowsUpdated = plugin.database.updateSQL(updateOldData);
-      plugin.debug("rows updated: " + rowsUpdated, "info");
-    }
-    plugin.debug("SQL queries done", "info");
-    return true;
-  }
-
-  /**
    * Returns the position of the next island - generates island locations in a
    * spiral.
    */
-  private Island nextIslandLocation(int x, int z) {
+  public Coordinates nextIslandLocation(int x, int z) {
     // Gets the next position of an Island based on the last one.
     // Generates new Islands in a spiral.
 
-    Island nextPos = new Island(x, z, plugin);
+    Coordinates crds = new Coordinates(x, z);
     if (x < z) {
       if (((-1) * x) < z) {
-        nextPos.x = nextPos.x + plugin.getISLAND_SPACING();
-        return nextPos;
+        crds.x = crds.x + plugin.getISLAND_SPACING();
+        return crds;
       }
-      nextPos.z = nextPos.z + plugin.getISLAND_SPACING();
-      return nextPos;
+      crds.z = crds.z + plugin.getISLAND_SPACING();
+      return crds;
     }
     if (x > z) {
       if (((-1) * x) >= z) {
-        nextPos.x = nextPos.x - plugin.getISLAND_SPACING();
-        return nextPos;
+        crds.x = crds.x - plugin.getISLAND_SPACING();
+        return crds;
       }
-      nextPos.z = nextPos.z - plugin.getISLAND_SPACING();
-      return nextPos;
+      crds.z = crds.z - plugin.getISLAND_SPACING();
+      return crds;
     }
     if (x <= 0) {
-      nextPos.z = nextPos.z + plugin.getISLAND_SPACING();
-      return nextPos;
+      crds.z = crds.z + plugin.getISLAND_SPACING();
+      return crds;
     }
-    nextPos.z = nextPos.z - plugin.getISLAND_SPACING();
-    return nextPos;
+    crds.z = crds.z - plugin.getISLAND_SPACING();
+    return crds;
   }
 
   public void generateIslandBlocks(int x, int z, String nick) {
@@ -141,10 +81,11 @@ public class IslandTools {
       }
     }
     
-    Location treeLoc = new Location(plugin.skyworld, x+4, y+3, z+4);
-    plugin.skyworld.generateTree(treeLoc, TreeType.TREE);
-
     /*
+    Location treeLoc = new Location(plugin.skyworld, x+4, y+3, z+4);
+    plugin.skyworld.generateTree(treeLoc, TreeType.TREE);*/
+
+    
     //tree
     for (int x_operate = x + 3; x_operate < x + 7; x_operate++) {
       for (int y_operate = y + 7; y_operate < y + 10; y_operate++) {
@@ -155,12 +96,10 @@ public class IslandTools {
       }
     }
 
-
-    
     for (int y_operate = y + 3; y_operate < y + 9; y_operate++) {
       Block blockToChange = world.getBlockAt(x + 5, y_operate, z + 5);
       blockToChange.setType(Material.LOG);
-    }*/
+    }
 
 
     // chest
@@ -237,22 +176,12 @@ public class IslandTools {
     }
   }
 
-  public void deactivateIsland(String playerName) throws SQLException {
-    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands SET `active` = 0 WHERE `nick` = '" + playerName + "';";
-    plugin.database.updateSQL(updateInactiveSql);
-  }
-
-  public void activateIsland(String playerName) throws SQLException {
-    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands SET `active` = 1 WHERE `nick` = '" + playerName + "';";
-    plugin.database.updateSQL(updateInactiveSql);
-  }
-
   public WorldEditPlugin getWorldEdit() {
-    Plugin plugin = this.plugin.getServer().getPluginManager().getPlugin("WorldEdit");
+    Plugin WEplugin = this.plugin.getServer().getPluginManager().getPlugin("WorldEdit");
     // WorldEdit may not be loaded
-    if (plugin == null || !(plugin instanceof WorldEditPlugin)) {
+    if (WEplugin == null || !(WEplugin instanceof WorldEditPlugin)) {
       return null;
     }
-    return (WorldEditPlugin) plugin;
+    return (WorldEditPlugin) WEplugin;
   }
 }

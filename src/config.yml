@@ -36,8 +36,11 @@ island-reset-cooldown: 3600
 # TODO: make this seperate for each player to choose
 hardcore: FALSE
 
-# setting this to true will delete inventories of playes, that are on an island when it is being deleted
+# setting this to true will delete inventories of playes, that are on an island when it is being reseted
 delete-visitor-inventory: FALSE
+
+# switch between keeping inventory after deactivating island or deleting it
+delete-inventory-on-deactivate: FALSE
 
 language:
   use: default

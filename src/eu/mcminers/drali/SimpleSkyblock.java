@@ -55,8 +55,9 @@ public class SimpleSkyblock extends JavaPlugin {
   private static final String CONF_MYSQL_PREFIX = "mysql.table-prefix";
   private static final String CONF_DEBUG = "debug";
   private static final String CONF_HARDCORE = "hardcore";
-  private static final String CONF_LANGUAGE = "delete-visitor-inventory";
-  private static final String CONF_DELETE_VISITOR_INV = "language.use";
+  private static final String CONF_DELETE_VISITOR_INV = "delete-visitor-inventory";
+  private static final String CONF_DELETE_INV_DEACTIVATE = "delete-inventory-on-deactivate";
+  private static final String CONF_LANGUAGE = "language.use";
   private static final String CONF_LANGUAGE_HIGHLIGHT = "language.highlight";
   private static final String CONF_LANGUAGE_BASE = "language.base";
   private static final String CONF_LANGUAGE_NOTICE = "language.notice";
@@ -75,11 +76,12 @@ public class SimpleSkyblock extends JavaPlugin {
   private String mysqlDatabase;
   private String mysqlUser;
   private String mysqlPass;
-  private String mysqlPrefix;
+  public String mysqlPrefix;
   public int resetCooldown;
   private boolean debug;
   public boolean hardcore;
   public boolean deleteVisitorInv;
+  public boolean deleteInvDeactivate;
   public String language;
   public String languageHighlight;
   public String languageBase;
@@ -103,7 +105,7 @@ public class SimpleSkyblock extends JavaPlugin {
     //load StringHandler
     out = new StringHandler(this);
 
-    //check if all values in config are valid and won't cause issues later
+    //check if all values in config are exists and won't cause issues later
     if (!checkConfig()) {
       //checkCofig also prints the mistake and tells the user how to fix it
       this.print("admin.config.general", false, "warning");
@@ -212,7 +214,7 @@ public class SimpleSkyblock extends JavaPlugin {
     }
 
     //Register commands
-    getCommand("sbtest").setExecutor(new Sky(this));
+    getCommand("sbtest").setExecutor(new Sky2(this));
     getCommand("sbadmin").setExecutor(new SkyAdmin(this));
 
     //getServer().getPluginManager().registerEvents(this, this);
@@ -331,7 +333,7 @@ public class SimpleSkyblock extends JavaPlugin {
    * @param player the owner of the island
    * @return Island object. If there is no such island in database, return null.
    * @throws SQLException
-   */
+   *//*
   public Island getPlayerData(Player player) throws SQLException {
 
     String sql = "SELECT id, x, z, nick, date, active FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1";
@@ -343,8 +345,8 @@ public class SimpleSkyblock extends JavaPlugin {
     else {
       return null;
     }
-  }
-
+  }*/
+/*
   public Island loadIslandData(ResultSet rs) throws SQLException {
     Island island = new Island(this);
     island.ownerNick = rs.getString("nick");
@@ -354,7 +356,7 @@ public class SimpleSkyblock extends JavaPlugin {
     island.date = rs.getLong("date");
     island.active = rs.getBoolean("active");
     return island;
-  }
+  }*/
 
   public void addPerk(Player player, String perk) {
     perms.playerAdd((String) null, player.getName(), perk);
@@ -398,12 +400,13 @@ public class SimpleSkyblock extends JavaPlugin {
     player.getInventory().setChestplate(null);
     player.getInventory().setLeggings(null);
     player.getInventory().setBoots(null);
+    /*
     List<Entity> Entities = player.getNearbyEntities(15, 15, 15);
     //15 blocks is enough, because any other blocks will fall to Void
     Iterator<Entity> ent = Entities.iterator();
     while (ent.hasNext()) {
       ent.next().remove();
-    }
+    }*/
   }
 
   public void displayHelp(Player player) {
@@ -535,6 +538,7 @@ public class SimpleSkyblock extends JavaPlugin {
     debug = pluginConfig.getBoolean(CONF_DEBUG);
     hardcore = pluginConfig.getBoolean(CONF_HARDCORE);
     deleteVisitorInv = pluginConfig.getBoolean(CONF_DELETE_VISITOR_INV);
+    deleteInvDeactivate = pluginConfig.getBoolean(CONF_DELETE_INV_DEACTIVATE);
     language = pluginConfig.getString(CONF_LANGUAGE);
     languageBase = pluginConfig.getString(CONF_LANGUAGE_BASE);
     languageHighlight = pluginConfig.getString(CONF_LANGUAGE_HIGHLIGHT);
@@ -558,7 +562,7 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   boolean checkConfig() {
-    //TODO check if mysql ip is valid
+    //TODO check if mysql ip is exists
     boolean configOk = true;
     if (mysqlIp.equals("")) {
       this.print("admin.config.sql.ip", false, "severe");
@@ -599,43 +603,6 @@ public class SimpleSkyblock extends JavaPlugin {
 
   public String getMysqlPrefix() {
     return this.mysqlPrefix;
-  }
-
-  public void tpVisitors(int x, int z) {
-    Player[] visitors = this.getPlayersOnIsland(x, z);
-    for (int i = 0; i < visitors.length; i++) {
-      //teleport players to center point
-      this.skyTp(0, 0, visitors[i]);
-      if(this.deleteVisitorInv){
-        this.clearInventory(visitors[i]);
-      }
-    }
-  }
-
-  public Player[] getPlayersOnIsland(int x, int z) {
-    Location loc;
-
-    //get max and min value (area of the island with center x and z)
-    //y value doesn't matter
-    int maxx = x + (islandSize / 2);
-    int maxz = z + (islandSize / 2);
-
-    int minx = x - (islandSize / 2);
-    int minz = z - (islandSize / 2);
-
-    int px;
-    int pz;
-
-    ArrayList<Player> result = new ArrayList();
-    for (Player player : skyworld.getPlayers()) {
-      loc = player.getLocation();
-      px = loc.getBlockX();
-      pz = loc.getBlockZ();
-      if (px >= minx && px <= maxx && pz >= minz && pz <= maxz) {
-        result.add(player);
-      }
-    }
-    return result.toArray(new Player[0]);
   }
 
   /**

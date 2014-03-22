@@ -1,8 +1,6 @@
 package eu.mcminers.drali;
 
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +21,11 @@ public class PlayerDeath implements Listener {
     this.plugin = plugin;
   }
 
+  /**
+   * Resets the player's island after his death (if hardcore is enabled).
+   *
+   * @param e
+   */
   @EventHandler(priority = EventPriority.NORMAL)
   public void Playerdeath(PlayerDeathEvent e) {
     //TODO Check if he died on skyworld
@@ -31,31 +34,35 @@ public class PlayerDeath implements Listener {
       if (e.getEntity() instanceof Player) {
         //get the Player
         Player player = (Player) e.getEntity();
+        System.out.println("onDeath");
 
-        player.sendMessage("You have died. Your island will be reseted.");
-        plugin.debug(player.getName() + " has died, reseting his island", "info");
+        if (player.getWorld() == plugin.skyworld) {
 
-        Island island = null;
-        try {
-          island = plugin.getPlayerData(player);
-        }
-        catch (SQLException ex) {
-          player.sendMessage("SQL Error when reseting your island. Please contact the server administrator.");
-        }
+          player.sendMessage("You have died. Your island will be reseted.");
+          plugin.debug(player.getName() + " has died, reseting his island", "info");
 
-        if (island != null) {
-          IslandTools iTools = new IslandTools(plugin);
 
-          //reset the area
-          iTools.generateIslandBlocks(island.x, island.z, island.ownerNick);
+          Island island = new Island(player.getName(), plugin);
+          try {
+            island.load();
+          }
+          catch (SQLException ex) {
+            //CATCH
+          }
+          if (island.exists) {
 
-          player.sendMessage("Your island was reseted");
+            island.reset();
 
-          //teleport player and clear his inventory
-          //plugin.skyTp(island.x, island.z, player);
-          plugin.clearInventory(player);
+            player.sendMessage("Your island was reseted");
+
+            /*
+             //teleport player and clear his inventory
+             island.tpHome(player);
+             plugin.clearInventory(player);*/
+          }
         }
       }
+
 
     }
   }
@@ -67,30 +74,23 @@ public class PlayerDeath implements Listener {
       //get the Player
       Player player = (Player) e.getPlayer();
 
-      Island island = null;
+      System.out.println("onRespawn");
+      Island island = new Island(player.getName(), plugin);
       try {
-        island = plugin.getPlayerData(player);
+        island.load();
       }
       catch (SQLException ex) {
-        player.sendMessage("SQL Error when reseting your island. Please contact the server administrator.");
+        //CATCH
       }
 
-      if (island != null) {
-
-        player.sendMessage("Your island was reseted");
-
-        //teleport player and clear his inventory
+      if (!island.exists) {
+        //tp to spawn
+        Location loc = new Location(plugin.skyworld, 0, plugin.islandY, 0);
+        e.setRespawnLocation(loc);
+      }
+      else {
         Location loc = new Location(plugin.skyworld, island.x, plugin.islandY, island.z);
         e.setRespawnLocation(loc);
-        /*try {
-          Thread.sleep(1);
-        }
-        catch (InterruptedException ex) {
-          Logger.getLogger(PlayerDeath.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        plugin.skyTp(island.x, island.z, player);
-        plugin.clearInventory(player);
-
       }
     }
 

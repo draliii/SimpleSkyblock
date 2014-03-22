@@ -87,24 +87,8 @@ public class HuskyMySQL extends HuskyDatabase {
   }
 
   public ResultSet querySQL(String query) {
-    /*
-    //plugin.print("admin.sql.query", true, "info", query);
-    Connection c = null;
 
-    //plugin.debug("checking connection", "info");
-    if (checkConnection()) {
-      //plugin.debug("connection found", "info");
-      c = getConnection();
-      if (c == null) {
-        //plugin.debug("connection is null, opening a new one", "info");
-        c = openConnection();
-      }
-    }
-    else {
-      //plugin.debug("connection not found, opening a new one", "info");
-      c = openConnection();
-    }*/
-
+    plugin.print("admin.sql.query", true, "info", query);
     Statement s = null;
     ResultSet ret = null;
 
@@ -115,26 +99,14 @@ public class HuskyMySQL extends HuskyDatabase {
     catch (SQLException e1) {
       e1.printStackTrace();
     }
-    closeConnection();
+    //closeConnection();
     return ret;
   }
 
   public int updateSQL(String sql) {
-    /*
-    plugin.print("admin.sql.query", true, "info", sql);
-    Connection c = null;
-
-    if (checkConnection()) {
-      c = getConnection();
-      if (c == null) {
-        c = openConnection();
-      }
-    }
-    else {
-      c = openConnection();
-    }*/
 
     Statement s = null;
+    plugin.print("admin.sql.query", true, "info", sql);
     int result = -1;
 
     try {
@@ -146,7 +118,7 @@ public class HuskyMySQL extends HuskyDatabase {
     }
 
     //plugin.print("admin.sql.queryrows", true, "info", result);
-    closeConnection();
+    //closeConnection();
     return result;
   }
 }
