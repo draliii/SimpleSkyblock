@@ -130,25 +130,9 @@ public class Sky2 implements CommandExecutor {
         //after the switch
         return true;
       }
-      catch (SQLException ex) {
+      catch (SQLException | ProtectedRegion.CircularInheritanceException | InvalidFlagFormat | ProtectionDatabaseException ex){
+        player.sendMessage("An error occured. Please contact the server administrator");
         ex.printStackTrace();
-        player.sendMessage("SQL Error. Please contact server administrator.");
-        //plugin.getLogger().info("SQL Error when executing command of " + player.getName()
-        //+ " at [" + island.x + ", " + plugin.getISLANDS_Y() + ", " + island.x + "]\n" + ex);
-        ex.printStackTrace();
-      }
-      catch (ProtectedRegion.CircularInheritanceException ex) {
-        player.sendMessage("Error when creating region for you. Please contact server administrator.");
-        plugin.getLogger().info("WorldGuard error when executing command of " + player.getName() + "]\n" + ex);
-      }
-      catch (InvalidFlagFormat ex) {
-        ex.printStackTrace();
-        player.sendMessage("Error when creating region for you. Please contact server administrator.");
-        plugin.getLogger().info("WorldGuard error when executing command of  " + player.getName() + "]\n" + ex);
-      }
-      catch (ProtectionDatabaseException ex) {
-        ex.printStackTrace();
-        Logger.getLogger(Sky2.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
     return false;
@@ -314,7 +298,7 @@ public class Sky2 implements CommandExecutor {
     }
   }
 
-  public void cmdReset(Player player){
+  public void cmdReset(Player player) {
     if (plugin.checkPerk(player, "simpleskyblock.sb.reset")) {
 
       //load island data
@@ -327,7 +311,7 @@ public class Sky2 implements CommandExecutor {
         e.printStackTrace();
         return;
       }
-      
+
       if (!island.exists) {
         player.sendMessage(plugin.out.get("command.reset.noisland"));
       }
@@ -337,11 +321,10 @@ public class Sky2 implements CommandExecutor {
       else {
         player.sendMessage(plugin.out.get("command.reset.starting"));
 
-        try{
-        island.reset();
+        try {
+          island.reset();
         }
-        catch(Exception e){
-          
+        catch (Exception e) {
         }
 
         player.sendMessage(plugin.out.get("command.reset.finished"));
@@ -427,7 +410,7 @@ public class Sky2 implements CommandExecutor {
 
         //teleport to home
         island.tpHome(player);
-        
+
         player.sendMessage(plugin.out.get("command.active.finished"));
       }
 
