@@ -28,7 +28,6 @@ public class PlayerDeath implements Listener {
    */
   @EventHandler(priority = EventPriority.NORMAL)
   public void Playerdeath(PlayerDeathEvent e) {
-    //TODO Check if he died on skyworld
     if (plugin.hardcore) {
       //if the dead entity is Player
       if (e.getEntity() instanceof Player) {
@@ -47,7 +46,7 @@ public class PlayerDeath implements Listener {
             island.load();
           }
           catch (SQLException ex) {
-            //CATCH
+            plugin.print("admin.sqlexception", false, "severe", "loading island data of " + player.getName() + "after his death.");
           }
           if (island.exists) {
 
@@ -55,49 +54,42 @@ public class PlayerDeath implements Listener {
               island.reset();
             }
             catch (Exception ex) {
-              
+              plugin.print("admin.sqlexception", false, "severe", "reseting island of " + player.getName() + "after his death.");
             }
 
             player.sendMessage("Your island was reseted");
-
-            /*
-             //teleport player and clear his inventory
-             island.tpHome(player);
-             plugin.clearInventory(player);*/
           }
         }
       }
-
-
     }
   }
 
   @EventHandler(priority = EventPriority.NORMAL)
   public void PlayerRespawn(PlayerRespawnEvent e) {
-    //TODO Check if he died on skyworld
     if (plugin.hardcore) {
       //get the Player
       Player player = (Player) e.getPlayer();
 
       System.out.println("onRespawn");
-      Island island = new Island(player.getName(), plugin);
-      try {
-        island.load();
-      }
-      catch (SQLException ex) {
-        //CATCH
-      }
+      if (player.getWorld() == plugin.skyworld) {
+        Island island = new Island(player.getName(), plugin);
+        try {
+          island.load();
+        }
+        catch (SQLException ex) {
+          plugin.print("admin.sqlexception", false, "severe", "loading island data of " + player.getName() + "after his death.");
+        }
 
-      if (!island.exists) {
-        //tp to spawn
-        Location loc = new Location(plugin.skyworld, 0, plugin.islandY, 0);
-        e.setRespawnLocation(loc);
-      }
-      else {
-        Location loc = new Location(plugin.skyworld, island.x, plugin.islandY, island.z);
-        e.setRespawnLocation(loc);
+        if (!island.exists) {
+          //tp to spawn
+          Location loc = new Location(plugin.skyworld, 0, plugin.islandY, 0);
+          e.setRespawnLocation(loc);
+        }
+        else {
+          Location loc = new Location(plugin.skyworld, island.x, plugin.islandY, island.z);
+          e.setRespawnLocation(loc);
+        }
       }
     }
-
   }
 }
