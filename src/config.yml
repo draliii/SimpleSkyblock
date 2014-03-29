@@ -42,6 +42,9 @@ delete-visitor-inventory: FALSE
 # switch between keeping inventory after deactivating island or deleting it
 delete-inventory-on-deactivate: FALSE
 
+# if set to false, players will keep their XP level even after island reset/deactivation(/anything else where inventory is deleted)
+delete-xp: TRUE
+
 language:
   use: default
   highlight: '&4'
