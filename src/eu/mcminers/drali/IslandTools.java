@@ -97,7 +97,7 @@ public class IslandTools {
     }
 
     for (int y_operate = y + 3; y_operate < y + 9; y_operate++) {
-      Block blockToChange = world.getBlockAt(x + 5, y_operate, z + 5);
+      Block blockToChange = world.getBlockAt(x + 4, y_operate, z + 4);
       blockToChange.setType(Material.LOG);
     }
 
