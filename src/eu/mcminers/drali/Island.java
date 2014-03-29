@@ -37,7 +37,8 @@ public class Island {
    * @throws SQLException
    */
   public void load() throws SQLException {
-    String sql = "SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, islands.date, members.id, members.island_id, members.member "
+    String sql = "SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, islands.date,"
+            + "members.id, members.island_id, members.member "
             + "FROM " + plugin.getMysqlPrefix() + "_islands islands "
             + "LEFT JOIN " + plugin.getMysqlPrefix() + "_members members "
             + "ON islands.id = members.island_id "
@@ -277,7 +278,7 @@ public class Island {
     this.deleteItems();
   }
 
-  private void deleteItems() {
+  public void deleteItems() {
     List<Entity> entList = plugin.skyworld.getEntities();//get all entities in the world
 
     int maxx = this.x + (plugin.islandSize / 2);
