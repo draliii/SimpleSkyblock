@@ -6,8 +6,6 @@ import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -288,6 +286,7 @@ public class Sky2 implements CommandExecutor {
         rTools.createRegion(island.x, island.z, player); //create the region and protect it
         //player.sendMessage("Your island was protected by a region");
 
+        island.deleteItems();
         island.tpHome(player);
         plugin.clearInventory(player);
         player.sendMessage(plugin.out.get("command.new.finished"));
