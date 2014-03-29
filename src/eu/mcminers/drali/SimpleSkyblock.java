@@ -10,11 +10,8 @@ package eu.mcminers.drali;
  * @author DJTommek MySQL queries
  */
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
-import com.onarandombox.MultiverseCore.utils.WorldManager;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import java.util.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -57,6 +54,7 @@ public class SimpleSkyblock extends JavaPlugin {
   private static final String CONF_HARDCORE = "hardcore";
   private static final String CONF_DELETE_VISITOR_INV = "delete-visitor-inventory";
   private static final String CONF_DELETE_INV_DEACTIVATE = "delete-inventory-on-deactivate";
+  private static final String CONF_DELETE_XP = "delete-xp";
   private static final String CONF_LANGUAGE = "language.use";
   private static final String CONF_LANGUAGE_HIGHLIGHT = "language.highlight";
   private static final String CONF_LANGUAGE_BASE = "language.base";
@@ -82,6 +80,7 @@ public class SimpleSkyblock extends JavaPlugin {
   public boolean hardcore;
   public boolean deleteVisitorInv;
   public boolean deleteInvDeactivate;
+  public boolean deleteXP;
   public String language;
   public String languageHighlight;
   public String languageBase;
@@ -166,16 +165,16 @@ public class SimpleSkyblock extends JavaPlugin {
     //load the skyworld
     this.print("admin.world.loading", true, "info");
     /*
-    MultiverseCore mvc = this.getMvCore();
-    //if Multiverse doesnt exist, load the world normally
-    if(mvc == null){
-      skyworld = this.getServer().getWorld(worldName);
-    }
-    else{
-      WorldManager wm = new WorldManager(mvc);
-      MultiverseWorld world = wm.getMVWorld("world_sgames");
-    }*/
-      skyworld = this.getServer().getWorld(worldName);
+     MultiverseCore mvc = this.getMvCore();
+     //if Multiverse doesnt exist, load the world normally
+     if(mvc == null){
+     skyworld = this.getServer().getWorld(worldName);
+     }
+     else{
+     WorldManager wm = new WorldManager(mvc);
+     MultiverseWorld world = wm.getMVWorld("world_sgames");
+     }*/
+    skyworld = this.getServer().getWorld(worldName);
     //if the world wasn't loaded
     if (skyworld == null) {
       this.print("admin.world.fail", false, "severe", skyworld.getName());
@@ -243,16 +242,22 @@ public class SimpleSkyblock extends JavaPlugin {
    *
    * @param player the player to look for
    * @return true if player's island is in the file
-   */
-  public boolean hasIsland(final Player player) throws SQLException {
-    String sql = "SELECT `id` FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1;";
-    ResultSet res = this.database.querySQL(sql);
-    if (res.next()) {
-      return true;
-    }
-    return false;
-  }
+   *//*
+   public boolean hasIsland(final Player player) throws SQLException {
+   String sql = "SELECT `id` FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1;";
+   ResultSet res = this.database.querySQL(sql);
+   if (res.next()) {
+   return true;
+   }
+   return false;
+   }*/
 
+  /**
+   * Returns the id and coordinates of
+   *
+   * @return {id, x, z}
+   * @throws SQLException
+   */
   public int[] getEmptyIsland() throws SQLException {
     //select the last line in the database (the last generated island)
     String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands WHERE active = 0 ORDER BY id ASC LIMIT 1;";
@@ -273,7 +278,7 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   public int getISLANDS_Y() {
-    return pluginConfig.getInt(CONF_ISLAND_Y);
+    return this.islandY;
   }
 
   public int[] getLastIsland() throws SQLException {
@@ -297,7 +302,7 @@ public class SimpleSkyblock extends JavaPlugin {
    * @return the number of blocks between two island centers (spacing + size)
    */
   public int getISLAND_SPACING() {
-    return (pluginConfig.getInt(CONF_ISLAND_SPACING) + pluginConfig.getInt(CONF_ISLAND_SIZE));
+    return (this.islandSpacing + this.islandSize);
   }
 
   public void skyTp(int x, int z, Player player) {
@@ -316,47 +321,11 @@ public class SimpleSkyblock extends JavaPlugin {
     }
 
     skyworld.loadChunk(x, z);
-    /* This seems to not be needed in the newer bukkit (1-7-2)
-     * if (player.getWorld() != this.skyworld) {//teleport twice if teleporting from another world (otherwise it teleports unsafely)
-     *   player.teleport(new Location(skyworld, x, h, z));
-     * }
-     */
 
     //add 0.5 to x and z, so the player gets teleported in the middle of a block
     //do h - 0.5 so the player stands on the ground and doesn't levitate (his head might gt stuck in something)
     player.teleport(new Location(skyworld, (x + 0.5), (h), (z + 0.5)));
   }
-
-  /**
-   * Gets data about a player island from the database.
-   *
-   * @param player the owner of the island
-   * @return Island object. If there is no such island in database, return null.
-   * @throws SQLException
-   *//*
-  public Island getPlayerData(Player player) throws SQLException {
-
-    String sql = "SELECT id, x, z, nick, date, active FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1";
-    ResultSet rs = database.querySQL(sql);
-
-    if (rs.next()) {
-      return loadIslandData(rs);
-    }
-    else {
-      return null;
-    }
-  }*/
-/*
-  public Island loadIslandData(ResultSet rs) throws SQLException {
-    Island island = new Island(this);
-    island.ownerNick = rs.getString("nick");
-    island.x = rs.getInt("x");
-    island.z = rs.getInt("z");
-    island.id = rs.getInt("id");
-    island.date = rs.getLong("date");
-    island.active = rs.getBoolean("active");
-    return island;
-  }*/
 
   public void addPerk(Player player, String perk) {
     perms.playerAdd((String) null, player.getName(), perk);
@@ -400,13 +369,9 @@ public class SimpleSkyblock extends JavaPlugin {
     player.getInventory().setChestplate(null);
     player.getInventory().setLeggings(null);
     player.getInventory().setBoots(null);
-    /*
-    List<Entity> Entities = player.getNearbyEntities(15, 15, 15);
-    //15 blocks is enough, because any other blocks will fall to Void
-    Iterator<Entity> ent = Entities.iterator();
-    while (ent.hasNext()) {
-      ent.next().remove();
-    }*/
+    if (this.deleteXP) {
+      player.setExp(0);
+    }
   }
 
   public void displayHelp(Player player) {
@@ -539,6 +504,7 @@ public class SimpleSkyblock extends JavaPlugin {
     hardcore = pluginConfig.getBoolean(CONF_HARDCORE);
     deleteVisitorInv = pluginConfig.getBoolean(CONF_DELETE_VISITOR_INV);
     deleteInvDeactivate = pluginConfig.getBoolean(CONF_DELETE_INV_DEACTIVATE);
+    deleteXP = pluginConfig.getBoolean(CONF_DELETE_XP);
     language = pluginConfig.getString(CONF_LANGUAGE);
     languageBase = pluginConfig.getString(CONF_LANGUAGE_BASE);
     languageHighlight = pluginConfig.getString(CONF_LANGUAGE_HIGHLIGHT);
@@ -606,7 +572,9 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   /**
-   * Retunrs the instance of MultiverseCore (if there is no such plugin on the server, null is returned)
+   * Retunrs the instance of MultiverseCore (if there is no such plugin on the
+   * server, null is returned)
+   *
    * @return MultiverseCore or null
    */
   public MultiverseCore getMvCore() {
@@ -615,8 +583,7 @@ public class SimpleSkyblock extends JavaPlugin {
     if (plugin instanceof MultiverseCore) {
       return (MultiverseCore) plugin;
     }
-
-    else{
+    else {
       return null;
     }
   }
