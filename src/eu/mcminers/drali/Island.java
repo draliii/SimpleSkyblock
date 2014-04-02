@@ -98,7 +98,7 @@ public class Island {
       }
     }
   }
-  
+
   public void tpHome(Player player) {
     int h = plugin.islandY;
 
@@ -197,68 +197,76 @@ public class Island {
    * @throws SQLException
    */
   public boolean create() throws SQLException {
+    //UNCOMMENT LINES: 204, 207, 224, 225-259
+
+
     //get an abandoned island (closest to [0, 0])
-    int[] emptyIsland = plugin.getEmptyIsland();
+    //int[] emptyIsland = plugin.getEmptyIsland();
 
     //if the id is 0 (which can never happen in the table), it means that no empty islands (or no islands at all) were found
-    if (emptyIsland[0] == 0) {
-      //get x, z of the island with highest ID (the latest generated, on the edge of the grid)
-      int[] lastIsland = plugin.getLastIsland();
+    //if (emptyIsland[0] == 0) {
+    //get x, z of the island with highest ID (the latest generated, on the edge of the grid)
+    int[] lastIsland = plugin.getLastIsland();
 
-      IslandTools iTools = new IslandTools(plugin);
-      //look for coordinates of the next island to be generated
-      Coordinates next = iTools.nextIslandLocation(lastIsland[0], lastIsland[1]);
-      //insert data about the island into database
+    IslandTools iTools = new IslandTools(plugin);
+    //look for coordinates of the crds island to be generated
+    Coordinates crds = iTools.nextIslandLocation(lastIsland[0], lastIsland[1]);
+    //insert data about the island into database
 
-      this.exists = true;
-      this.date = System.currentTimeMillis() / 1000;
-      this.x = next.x;
-      this.z = next.z;
-
-      String insert = "INSERT INTO " + plugin.getMysqlPrefix() + "_islands (`x`, `z`, `nick`, `date`)"
-              + "VALUES (" + this.x + ", " + this.z + ", '" + this.ownerNick + "', '" + this.date + "');";
-      plugin.database.updateSQL(insert);
-    } //if an abandoned island was found
-    else {
-      //delete all players that could tphome to that island before
-      String deleteOldMembers = "DELETE FROM " + plugin.getMysqlPrefix() + "_members"
-              + " WHERE island_id = " + emptyIsland[0] + ";";
-      int rowsDeleted = plugin.database.updateSQL(deleteOldMembers);
-      plugin.debug("rows deleted: " + rowsDeleted, "info");
-
-      //get the previous owner's nick and delete the WG region
-      String previousPlayerSql = "SELECT `nick`, `x`, `z` FROM " + plugin.getMysqlPrefix() + "_islands WHERE id = '" + emptyIsland[0] + "';";
-      ResultSet rs = plugin.database.querySQL(previousPlayerSql);
-      if (rs.next()) {//if the query found something
-        //delete the region
-        this.x = rs.getInt("x");
-        this.z = rs.getInt("z");
-        String previousPlayer = rs.getString("nick");
-        RegionTools rTools = new RegionTools(plugin);
-        rTools.getWorldGuard().getRegionManager(plugin.skyworld).removeRegion(previousPlayer + "Island");
-        plugin.debug("Deleting region of " + previousPlayer, "info");
-      }
-      else {
-        plugin.debug("ERROR, inactive nick wasn't found", "severe");
-      }
-
-      this.exists = true;
-      this.active = true;
-      this.date = System.currentTimeMillis() / 1000;
-
-      //clear previous data (owner, date) and replace them with new data
-      String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
-              + " SET nick = '" + this.ownerNick + "', date = '" + this.date + "', active = 1 "
-              + " WHERE id = " + emptyIsland[0]
-              + " LIMIT 1;";
-      int rowsUpdated = plugin.database.updateSQL(updateOldData);
-      plugin.debug("rows updated: " + rowsUpdated, "info");
+    while(!iTools.isEmpty(crds)){
+     crds = iTools.nextIslandLocation(crds.x, crds.z);
     }
+
+    this.exists = true;
+    this.date = System.currentTimeMillis() / 1000;
+    this.x = crds.x;
+    this.z = crds.z;
+
+    String insert = "INSERT INTO " + plugin.getMysqlPrefix() + "_islands (`x`, `z`, `nick`, `date`)"
+            + "VALUES (" + this.x + ", " + this.z + ", '" + this.ownerNick + "', '" + this.date + "');";
+    plugin.database.updateSQL(insert);
+    //} //if an abandoned island was found
+    /*else {
+     //delete all players that could tphome to that island before
+     String deleteOldMembers = "DELETE FROM " + plugin.getMysqlPrefix() + "_members"
+     + " WHERE island_id = " + emptyIsland[0] + ";";
+     int rowsDeleted = plugin.database.updateSQL(deleteOldMembers);
+     plugin.debug("rows deleted: " + rowsDeleted, "info");
+
+     //get the previous owner's nick and delete the WG region
+     String previousPlayerSql = "SELECT `nick`, `x`, `z` FROM " + plugin.getMysqlPrefix() + "_islands WHERE id = '" + emptyIsland[0] + "';";
+     ResultSet rs = plugin.database.querySQL(previousPlayerSql);
+     if (rs.crds()) {//if the query found something
+     //delete the region
+     this.x = rs.getInt("x");
+     this.z = rs.getInt("z");
+     String previousPlayer = rs.getString("nick");
+     RegionTools rTools = new RegionTools(plugin);
+     rTools.getWorldGuard().getRegionManager(plugin.skyworld).removeRegion(previousPlayer + "Island");
+     plugin.debug("Deleting region of " + previousPlayer, "info");
+     }
+     else {
+     plugin.debug("ERROR, inactive nick wasn't found", "severe");
+     }
+
+     this.exists = true;
+     this.active = true;
+     this.date = System.currentTimeMillis() / 1000;
+
+     //clear previous data (owner, date) and replace them with new data
+     String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
+     + " SET nick = '" + this.ownerNick + "', date = '" + this.date + "', active = 1 "
+     + " WHERE id = " + emptyIsland[0]
+     + " LIMIT 1;";
+     int rowsUpdated = plugin.database.updateSQL(updateOldData);
+     plugin.debug("rows updated: " + rowsUpdated, "info");
+     }*/
     plugin.debug("SQL queries done", "info");
     return true;
   }
 
-  public void reset() throws SQLException, Exception {
+  public void reset() throws SQLException,
+                             Exception {
     this.date = System.currentTimeMillis() / 1000;
     //update database (reset date)
     String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
@@ -303,16 +311,20 @@ public class Island {
 
   public void deactivate() throws SQLException {
     this.tpVisitors();
-    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands SET `active` = 0 WHERE `nick` = '" + this.ownerNick + "';";
+    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands"
+            + "SET `active` = 0 WHERE `nick` = '" + this.ownerNick + "';";
     plugin.database.updateSQL(updateInactiveSql);
-    
+
     plugin.clearInventory(owner);
+    plugin.skyTp(0, 0, owner);
+
     this.deleteItems();
     this.active = false;
   }
 
   public void activate() throws SQLException {
-    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands SET `active` = 1 WHERE `nick` = '" + this.ownerNick + "';";
+    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands"
+            + "SET `active` = 1 WHERE `nick` = '" + this.ownerNick + "';";
     plugin.database.updateSQL(updateInactiveSql);
     this.active = true;
   }

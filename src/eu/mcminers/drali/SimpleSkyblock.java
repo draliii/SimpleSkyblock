@@ -98,13 +98,11 @@ public class SimpleSkyblock extends JavaPlugin {
     pluginConfig = this.getConfig();  //load config data into a variable
 
     this.loadConfig(); //extract values from config
-    //TODO: check if island size/spacing matches data in database.
-    //      If not, tell the console and disable plugin to prevent island overwriting
 
     //load StringHandler
     out = new StringHandler(this);
 
-    //check if all values in config are exists and won't cause issues later
+    //check if all values in config exists and won't cause issues later
     if (!checkConfig()) {
       //checkCofig also prints the mistake and tells the user how to fix it
       this.print("admin.config.general", false, "warning");
@@ -115,6 +113,7 @@ public class SimpleSkyblock extends JavaPlugin {
       //TODO: maybe find a better way to do this...
       return;
     }
+    this.print("admin.config.ok", true, "info");
 
     //write the config to disk
     //not really sure how this works
@@ -186,6 +185,7 @@ public class SimpleSkyblock extends JavaPlugin {
     //also, players are teleported here when deactivating your island
     if (generateSpawn) {
       if (skyworld.getBlockAt(0, islandY - 1, 0).getType() == Material.AIR) {
+        this.print("admin.spawn.blocks", true, "info");
         for (int i = -1; i < 2; i++) {
           for (int j = -1; j < 2; j++) {
             Block blockToSet = skyworld.getBlockAt(i, islandY, j);
@@ -200,7 +200,7 @@ public class SimpleSkyblock extends JavaPlugin {
       RegionTools rTools = new RegionTools(this);
       RegionManager rm = rTools.getWorldGuard().getRegionManager(skyworld);
       if (!(rm.hasRegion("skyspawn"))) {
-        this.print("admin.spawn.create", true, "info");
+        this.print("admin.spawn.region", true, "info");
         //make a region, and add it
         rm.addRegion(rTools.makeRegion("SkySpawn", 0, 0));
         try {
@@ -213,15 +213,15 @@ public class SimpleSkyblock extends JavaPlugin {
     }
 
     //Register commands
-    getCommand("sbtest").setExecutor(new Sky2(this));
+    getCommand("sb").setExecutor(new Sky2(this));
     getCommand("sbadmin").setExecutor(new SkyAdmin(this));
 
     //getServer().getPluginManager().registerEvents(this, this);
     //new PlayerDeath(this);
     getServer().getPluginManager().registerEvents(new PlayerDeath(this), this);
 
-    PluginDescriptionFile pdfFile = this.getDescription();
-    this.getLogger().info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+    this.print("admin.enabled", false, "info");
+    
   }
 
   /**
@@ -233,33 +233,17 @@ public class SimpleSkyblock extends JavaPlugin {
     if (database != null) {
       database.closeConnection();
     }
-    PluginDescriptionFile pdfFile = this.getDescription();
-    this.getLogger().info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is now Disabled!");
+    this.print("admin.disabled", false, "info");
   }
 
   /**
-   * Checks if the player has an island in playerIslands.bin
-   *
-   * @param player the player to look for
-   * @return true if player's island is in the file
-   *//*
-   public boolean hasIsland(final Player player) throws SQLException {
-   String sql = "SELECT `id` FROM " + this.mysqlPrefix + "_islands WHERE LOWER(nick) = LOWER('" + player.getName() + "') LIMIT 1;";
-   ResultSet res = this.database.querySQL(sql);
-   if (res.next()) {
-   return true;
-   }
-   return false;
-   }*/
-
-  /**
-   * Returns the id and coordinates of
+   * Returns the id and coordinates of a deactivated island - in case no deactivated isalnds are found, id 0 is returned.
    *
    * @return {id, x, z}
    * @throws SQLException
    */
   public int[] getEmptyIsland() throws SQLException {
-    //select the last line in the database (the last generated island)
+    //select the first deactivated island in the database
     String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands WHERE active = 0 ORDER BY id ASC LIMIT 1;";
     ResultSet res = this.database.querySQL(sql);
     res.last();
@@ -371,6 +355,7 @@ public class SimpleSkyblock extends JavaPlugin {
     player.getInventory().setBoots(null);
     if (this.deleteXP) {
       player.setExp(0);
+      player.setTotalExperience(0);
     }
   }
 
@@ -563,7 +548,8 @@ public class SimpleSkyblock extends JavaPlugin {
       configOk = false;
     }
 
-    //TODO: Add other checks
+    //TODO: check if island size/spacing matches data in database.
+    //      If not, tell the console and disable plugin to prevent island overwriting
     return configOk;
   }
 

@@ -105,9 +105,24 @@ předchozí opatření je nefunkční, bylo opraveno (spojení se otevírá př�
 pridano nastavitelne mazani inventaru navstevniku pri resetu/delete ostrova
 pri re-aktivaci ostrova se znovu obnoví members z databáze
 
+2.6
+pridana moznost delete XP pri mazani inventare
 
+2.7
+opravena predchozi verze
+
+2.8
+moznost admin teleportu na libovolny ostrov
+opravena prava u friend
+
+3.0
+pridano overovani, jestli na danych souradnicich ostrov nahodou uz neni (když nejsou podle id)
+
+3.1
+opraven dotaz z 3.0
 
 TODO:
+spojit sb friend list a sb info
 pridat moznost vypsani prav jineho hrace (sb friend list nick)
 - když je někde nad bedrockem láva, portne to do ní
 - upravit některé hlášky v nápovědě.... které?

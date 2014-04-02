@@ -195,6 +195,7 @@ public class StringHandler {
 
   private static void setDefaults() {
     // strings which allow more than one line will be a list
+    defaultStrings.put("admin.config.ok", "Config loaded succesfully");
     defaultStrings.put("admin.config.general", "Check and fix your config.yml to load SimpleSkyblock succesfully");
     defaultStrings.put("admin.config.loading", "Loading config...");
     defaultStrings.put("admin.config.sql.ip", "MySQL IP not set in config.");
@@ -216,8 +217,14 @@ public class StringHandler {
     defaultStrings.put("admin.sql.queryrows", "SQL: %s");
     defaultStrings.put("admin.world.loading", "Loading skyworld...");
     defaultStrings.put("admin.world.fail", "The world \"%s\" doesn't exist.");
-    defaultStrings.put("admin.spawn.create", "Center region not found, creating one for you!");
+    defaultStrings.put("admin.spawn.blocks", "Center blocks not found, creating them for you!");
+    defaultStrings.put("admin.spawn.region", "Center region not found, creating one for you!");
     defaultStrings.put("admin.noconsole", "Only players can use this command");
+    defaultStrings.put("admin.enabled", "SimpleSkyblock loaded!");
+    defaultStrings.put("admin.disabled", "SimpleSkyblock disabled!");
+    
+    defaultStrings.put("admin.tp.inactive", "Forcing teleport to an inactive island!");
+    defaultStrings.put("admin.tp.nonfriend", "WARNING! You are teleporting to an island whose owner didn't add you as his friend.");
 
     defaultStrings.put("plugin.headline", "   &c-&e-&c-&e-&c-&e- &c[&e&o%s&c] &e-&c-&e-&c-&e-&c-&e");
     defaultStrings.put("plugin.help.name", "Skyblock Help");
@@ -233,10 +240,12 @@ public class StringHandler {
     defaultStrings.put("plugin.region.deleting", "Deleting region: %s");
 
 
-    defaultStrings.put("command.error.noparameters", "No parameters given");
+    defaultStrings.put("command.error.noparameters", "No parameters given. Use /sb help to see the help");
     defaultStrings.put("command.error.unknown", "Unknown command. Use /sb help to see the help");
-    defaultStrings.put("command.error.unknownparameter", "Parameter not found");
+    defaultStrings.put("command.error.unknownparameter", "Parameter not found. Use /sb help to see the help");
     defaultStrings.put("command.error.noisland", "You don't have an island. To create one, use /sb new");
+    defaultStrings.put("command.error.exception", "An error occured when executing your command, sorry. Please contact the server administrator");
+    defaultStrings.put("command.error.sqlexception", "An error occured when loading island data, sorry. Please contact the server administrator");
 
     defaultStrings.put("command.tphome.noisland", "You don't have an island");
     defaultStrings.put("command.tphome.inactive", "Your island is inactive now. Activate it with /sb active");

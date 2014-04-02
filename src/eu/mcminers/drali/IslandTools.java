@@ -1,6 +1,8 @@
 package eu.mcminers.drali;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -174,6 +176,15 @@ public class IslandTools {
         }
       }
     }
+  }
+  
+  public boolean isEmpty(Coordinates crds) throws SQLException {
+    ResultSet rs;
+    String checkIsland = "SELECT id, x, z FROM " + plugin.mysqlPrefix + "_islands"
+            + " WHERE x = " + crds.x + " AND z = " + crds.z + " LIMIT 1;";
+    rs = plugin.database.querySQL(checkIsland);
+    
+    return rs.next();
   }
 
   public WorldEditPlugin getWorldEdit() {

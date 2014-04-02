@@ -128,8 +128,8 @@ public class Sky2 implements CommandExecutor {
         //after the switch
         return true;
       }
-      catch (SQLException | ProtectedRegion.CircularInheritanceException | InvalidFlagFormat | ProtectionDatabaseException ex){
-        player.sendMessage("An error occured. Please contact the server administrator");
+      catch (SQLException | ProtectedRegion.CircularInheritanceException | InvalidFlagFormat | ProtectionDatabaseException ex) {
+        player.sendMessage(plugin.out.get("command.error.exception"));
         ex.printStackTrace();
       }
     }
@@ -146,7 +146,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -186,25 +186,34 @@ public class Sky2 implements CommandExecutor {
           island.load();
         }
         catch (SQLException e) {
-          player.sendMessage("There has been an error when loading your island, sorry.");
+          player.sendMessage(plugin.out.get("command.error.sqlexception"));
           e.printStackTrace();
           return;
         }
 
-        //no results found (the visited nick doesn't exist)
-        if (!island.exists) {
-          player.sendMessage(plugin.out.get("command.tpfriend.noisland"));
-          return;
-        }
+          //no results found (the visited nick doesn't exist)
+          if (!island.exists) {
+            player.sendMessage(plugin.out.get("command.tpfriend.noisland"));
+            return;
+          }
 
-        //if the island is inactive
-        if (!island.active) {
-          player.sendMessage(plugin.out.get("command.tpfriend.inactive"));
-          return;
-        }
-
-        if (island.isFriend(player.getName())) {
+        boolean op = plugin.checkPerk(player, "simpleskyblock.admin.tpall");
+        
+        if (island.isFriend(player.getName()) | op) {
+          
+          //if the island is inactive
+          if (!island.active) {
+            player.sendMessage(plugin.out.get("command.tpfriend.inactive"));
+            if(!op){
+              return;
+            }
+            player.sendMessage(plugin.out.get("admin.tp.inactive"));
+          }
+          
           player.sendMessage(plugin.out.format("command.tpfriend.teleporting", visited));
+          if(!island.isFriend(player.getName())){
+            player.sendMessage(plugin.out.get("admin.tp.nonfriend"));
+          }
           island.tpHome(player);
         }
         else {
@@ -231,7 +240,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -262,7 +271,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -306,7 +315,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -346,7 +355,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -388,7 +397,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -443,7 +452,7 @@ public class Sky2 implements CommandExecutor {
           island.load();
         }
         catch (SQLException e) {
-          player.sendMessage("There has been an error when loading your island, sorry.");
+          player.sendMessage(plugin.out.get("command.error.sqlexception"));
           e.printStackTrace();
           return;
         }
@@ -485,7 +494,7 @@ public class Sky2 implements CommandExecutor {
   }
 
   public void cmdFriendRemove(Player player, String friend) throws SQLException {
-    if (plugin.checkPerk(player, "simpleskyblock.sb.friend.add")) {
+    if (plugin.checkPerk(player, "simpleskyblock.sb.friend.remove")) {
       if (friend == null) {
         player.sendMessage(plugin.out.get("command.removefriend.nonick"));
       }
@@ -502,7 +511,7 @@ public class Sky2 implements CommandExecutor {
           island.load();
         }
         catch (SQLException e) {
-          player.sendMessage("There has been an error when loading your island, sorry.");
+          player.sendMessage(plugin.out.get("command.error.sqlexception"));
           e.printStackTrace();
           return;
         }
@@ -545,7 +554,7 @@ public class Sky2 implements CommandExecutor {
   }
 
   public void cmdFriendList(Player player) throws SQLException {
-    if (plugin.checkPerk(player, "simpleskyblock.sb.friend.add")) {
+    if (plugin.checkPerk(player, "simpleskyblock.sb.friend.list")) {
 
       //load island data
       Island island = new Island(player.getName(), plugin);
@@ -553,7 +562,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }
@@ -604,7 +613,7 @@ public class Sky2 implements CommandExecutor {
   }
 
   public void cmdFriendClear(Player player) throws SQLException {
-    if (plugin.checkPerk(player, "simpleskyblock.sb.friend.add")) {
+    if (plugin.checkPerk(player, "simpleskyblock.sb.friend.clear")) {
 
       //load island data
       Island island = new Island(player.getName(), plugin);
@@ -612,7 +621,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage("There has been an error when loading your island, sorry.");
+        player.sendMessage(plugin.out.get("command.error.sqlexception"));
         e.printStackTrace();
         return;
       }

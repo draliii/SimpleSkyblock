@@ -6,7 +6,7 @@ softdepend: [CleanroomGenerator, Multiverse-Core]
 depend: [Vault, WorldGuard]
 author: drali_ (based on code by Talabrek (based on code by Qgel))
 commands:
-    sbtest:
+    sb:
         description: sbtest command!
         usage:  |
             /sb [smthng]
