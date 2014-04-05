@@ -31,13 +31,33 @@ public class Island {
     this.ownerNick = owner;
   }
 
-  /**
-   *
-   * @param owner
-   * @throws SQLException
-   */
-  public void load() throws SQLException {
-    String sql = "SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, islands.date,"
+  private boolean loadData() {
+    Island tmp = plugin.playerIslands.get(this.ownerNick);
+    if (tmp == null) {
+      return false;
+    }
+    else {
+      this.x = tmp.x;
+      this.z = tmp.z;
+      this.id = tmp.id;
+      this.date = tmp.date;
+      this.active = tmp.active;
+      this.exists = tmp.exists;
+      this.friends = tmp.friends;
+
+      this.owner = null;
+      for (Player p : plugin.getServer().getOnlinePlayers()) {
+        if (p.getName().equals(this.ownerNick)) {
+          this.owner = p;
+          break;
+        }
+      }
+      return true;
+    }
+  }
+
+  private void loadSQL() throws SQLException {
+        String sql = "SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, islands.date,"
             + "members.id, members.island_id, members.member "
             + "FROM " + plugin.getMysqlPrefix() + "_islands islands "
             + "LEFT JOIN " + plugin.getMysqlPrefix() + "_members members "
@@ -47,7 +67,6 @@ public class Island {
     ResultSet rs = plugin.database.querySQL(sql);
 
     if (rs.next()) {
-      this.ownerNick = rs.getString("islands.nick");
       this.x = rs.getInt("islands.x");
       this.z = rs.getInt("islands.z");
       this.id = rs.getInt("islands.id");
@@ -80,7 +99,18 @@ public class Island {
     else {
       this.exists = false;
     }
+  }
 
+  /**
+   * Loads player data from a variable or database.
+   *
+   * @throws SQLException in case something goes wrong in the database
+   */
+  public void load() throws SQLException {
+    if(!this.loadData()){
+      this.loadSQL();
+      plugin.playerIslands.put(ownerNick, this);
+    }
   }
 
   @Override
@@ -206,17 +236,17 @@ public class Island {
     //if the id is 0 (which can never happen in the table), it means that no empty islands (or no islands at all) were found
     //if (emptyIsland[0] == 0) {
     //get x, z of the island with highest ID (the latest generated, on the edge of the grid)
-    int[] lastIsland = plugin.getLastIsland();
+    Coordinates last = plugin.getLastIsland();
 
     IslandTools iTools = new IslandTools(plugin);
     //look for coordinates of the crds island to be generated
-    Coordinates crds = iTools.nextIslandLocation(lastIsland[0], lastIsland[1]);
+    Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
     //insert data about the island into database
-
-    while(!iTools.isEmpty(crds)){
+/*
+     while(!iTools.isEmpty(crds)){
      crds = iTools.nextIslandLocation(crds.x, crds.z);
-    }
-
+     }
+     */
     this.exists = true;
     this.date = System.currentTimeMillis() / 1000;
     this.x = crds.x;

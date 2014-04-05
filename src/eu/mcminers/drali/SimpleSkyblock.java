@@ -16,6 +16,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -26,7 +27,6 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 
 public class SimpleSkyblock extends JavaPlugin {
   //drop protect má otevřený kód, zkontrolovat
@@ -34,6 +34,7 @@ public class SimpleSkyblock extends JavaPlugin {
   public static Permission perms = null;
   private FileConfiguration pluginConfig;
   public HuskyMySQL database;
+  public HashMap<String, Island> playerIslands = new HashMap<>();
   //
   public StringHandler out;
   private static final String CONF_ISLAND_Y = "island-height";
@@ -101,6 +102,8 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //load StringHandler
     out = new StringHandler(this);
+    
+    this.playerIslands = new HashMap<>();
 
     //check if all values in config exists and won't cause issues later
     if (!checkConfig()) {
@@ -265,18 +268,16 @@ public class SimpleSkyblock extends JavaPlugin {
     return this.islandY;
   }
 
-  public int[] getLastIsland() throws SQLException {
+  public Coordinates getLastIsland() throws SQLException {
     String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands ORDER BY id DESC LIMIT 1;";
     ResultSet res = this.database.querySQL(sql);
-    int[] result = new int[2];
     res.last(); //this line has to be here
+    Coordinates result;
     if (res.getRow() == 1) {
-      result[0] = res.getInt("x");
-      result[1] = res.getInt("z");
+      result = new Coordinates(res.getInt("x"), res.getInt("z"));
     }
     else {
-      result[0] = 0;
-      result[1] = 0;
+      result = null;
     }
     return result;
   }

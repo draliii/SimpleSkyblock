@@ -79,6 +79,19 @@ public class Sky2 implements CommandExecutor {
             cmdDelete(player);
             break;
 
+          case "getpos":
+            Coordinates last = plugin.getLastIsland();
+
+            IslandTools iTools = new IslandTools(plugin);
+            //look for coordinates of the crds island to be generated
+            Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
+/*
+            while (!iTools.isEmpty(crds)) {
+              crds = iTools.nextIslandLocation(crds.x, crds.z);
+            }*/
+            player.sendMessage("x: " + crds.x + ", z: " + crds.z);
+            break;
+
           //the ACTIVE command
           case "active":
             cmdActive(player);
@@ -191,27 +204,27 @@ public class Sky2 implements CommandExecutor {
           return;
         }
 
-          //no results found (the visited nick doesn't exist)
-          if (!island.exists) {
-            player.sendMessage(plugin.out.get("command.tpfriend.noisland"));
-            return;
-          }
+        //no results found (the visited nick doesn't exist)
+        if (!island.exists) {
+          player.sendMessage(plugin.out.get("command.tpfriend.noisland"));
+          return;
+        }
 
         boolean op = plugin.checkPerk(player, "simpleskyblock.admin.tpall");
-        
+
         if (island.isFriend(player.getName()) | op) {
-          
+
           //if the island is inactive
           if (!island.active) {
             player.sendMessage(plugin.out.get("command.tpfriend.inactive"));
-            if(!op){
+            if (!op) {
               return;
             }
             player.sendMessage(plugin.out.get("admin.tp.inactive"));
           }
-          
+
           player.sendMessage(plugin.out.format("command.tpfriend.teleporting", visited));
-          if(!island.isFriend(player.getName())){
+          if (!island.isFriend(player.getName())) {
             player.sendMessage(plugin.out.get("admin.tp.nonfriend"));
           }
           island.tpHome(player);
