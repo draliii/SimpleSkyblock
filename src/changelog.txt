@@ -134,6 +134,4 @@ Momentálně nebudu řešit:
 zkontrolovat, co příkazy vrací (aby se nevypisovala nápověda z plugin.yml) -> nikde to nevidím...
 úprava flagu regionu (bude) 
 po přesunu bloku pistem do resky spawnu se blok posune ale uz nejde znicit
-check if the two queries in sb add could be joined together
-za záhadných okolností mizí regiony a plugin si s tím neví rady (přidat kontrolu regionu a pripisovani - pravdepodobne pri startu)
 při deaktivaci ostrova ostatni porad vidi, ze tam maji pravo, dokud si ostrov nezabere nekdo jiny (mozna upravit, mozna nechat)

@@ -242,6 +242,9 @@ public class Island {
     //look for coordinates of the crds island to be generated
     Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
     //insert data about the island into database
+    
+    
+    
 /*
      while(!iTools.isEmpty(crds)){
      crds = iTools.nextIslandLocation(crds.x, crds.z);
@@ -295,8 +298,7 @@ public class Island {
     return true;
   }
 
-  public void reset() throws SQLException,
-                             Exception {
+  public void reset() throws SQLException{
     this.date = System.currentTimeMillis() / 1000;
     //update database (reset date)
     String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
@@ -341,7 +343,7 @@ public class Island {
 
   public void deactivate() throws SQLException {
     this.tpVisitors();
-    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands"
+    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
             + "SET `active` = 0 WHERE `nick` = '" + this.ownerNick + "';";
     plugin.database.updateSQL(updateInactiveSql);
 
@@ -353,9 +355,17 @@ public class Island {
   }
 
   public void activate() throws SQLException {
-    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands"
+    String updateInactiveSql = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
             + "SET `active` = 1 WHERE `nick` = '" + this.ownerNick + "';";
     plugin.database.updateSQL(updateInactiveSql);
     this.active = true;
+  }
+  
+  public void save(){
+    if(plugin.playerIslands.containsKey(this.ownerNick)){
+      plugin.playerIslands.remove(this.ownerNick);
+    }
+    
+    plugin.playerIslands.put(this.ownerNick, this);
   }
 }

@@ -86,6 +86,7 @@ public class SimpleSkyblock extends JavaPlugin {
   public String languageHighlight;
   public String languageBase;
   public String languageNotice;
+  public Sky2 skyCommand;
 
   /**
    * Ran when the plugin is being enabled (loading all files, setting
@@ -102,7 +103,7 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //load StringHandler
     out = new StringHandler(this);
-    
+
     this.playerIslands = new HashMap<>();
 
     //check if all values in config exists and won't cause issues later
@@ -166,17 +167,9 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //load the skyworld
     this.print("admin.world.loading", true, "info");
-    /*
-     MultiverseCore mvc = this.getMvCore();
-     //if Multiverse doesnt exist, load the world normally
-     if(mvc == null){
-     skyworld = this.getServer().getWorld(worldName);
-     }
-     else{
-     WorldManager wm = new WorldManager(mvc);
-     MultiverseWorld world = wm.getMVWorld("world_sgames");
-     }*/
+    
     skyworld = this.getServer().getWorld(worldName);
+
     //if the world wasn't loaded
     if (skyworld == null) {
       this.print("admin.world.fail", false, "severe", skyworld.getName());
@@ -216,7 +209,8 @@ public class SimpleSkyblock extends JavaPlugin {
     }
 
     //Register commands
-    getCommand("sb").setExecutor(new Sky2(this));
+    skyCommand = new Sky2(this);
+    getCommand("sb").setExecutor(skyCommand);
     getCommand("sbadmin").setExecutor(new SkyAdmin(this));
 
     //getServer().getPluginManager().registerEvents(this, this);
@@ -224,7 +218,7 @@ public class SimpleSkyblock extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new PlayerDeath(this), this);
 
     this.print("admin.enabled", false, "info");
-    
+
   }
 
   /**
@@ -240,7 +234,8 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   /**
-   * Returns the id and coordinates of a deactivated island - in case no deactivated isalnds are found, id 0 is returned.
+   * Returns the id and coordinates of a deactivated island - in case no
+   * deactivated isalnds are found, id 0 is returned.
    *
    * @return {id, x, z}
    * @throws SQLException
@@ -314,14 +309,6 @@ public class SimpleSkyblock extends JavaPlugin {
 
   public void addPerk(Player player, String perk) {
     perms.playerAdd((String) null, player.getName(), perk);
-  }
-
-  public void removePerk(Player player, String perk) {
-    perms.playerRemove((String) null, player.getName(), perk);
-  }
-
-  public void addGroup(Player player, String perk) {
-    perms.playerAddGroup((String) null, player.getName(), perk);
   }
 
   public boolean checkPerk(Player player, String perk) {

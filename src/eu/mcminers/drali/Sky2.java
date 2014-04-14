@@ -85,10 +85,10 @@ public class Sky2 implements CommandExecutor {
             IslandTools iTools = new IslandTools(plugin);
             //look for coordinates of the crds island to be generated
             Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
-/*
-            while (!iTools.isEmpty(crds)) {
-              crds = iTools.nextIslandLocation(crds.x, crds.z);
-            }*/
+            /*
+             while (!iTools.isEmpty(crds)) {
+             crds = iTools.nextIslandLocation(crds.x, crds.z);
+             }*/
             player.sendMessage("x: " + crds.x + ", z: " + crds.z);
             break;
 
@@ -139,6 +139,7 @@ public class Sky2 implements CommandExecutor {
             break;
         }
         //after the switch
+
         return true;
       }
       catch (SQLException | ProtectedRegion.CircularInheritanceException | InvalidFlagFormat | ProtectionDatabaseException ex) {
@@ -311,6 +312,7 @@ public class Sky2 implements CommandExecutor {
         island.deleteItems();
         island.tpHome(player);
         plugin.clearInventory(player);
+        island.save();
         player.sendMessage(plugin.out.get("command.new.finished"));
       }
     }
@@ -345,12 +347,16 @@ public class Sky2 implements CommandExecutor {
         try {
           island.reset();
         }
-        catch (Exception e) {
+        catch (SQLException e) {
+          player.sendMessage(plugin.out.get("command.error.sqlexception"));
+          e.printStackTrace();
+          return;
         }
 
         player.sendMessage(plugin.out.get("command.reset.finished"));
 
         island.tpHome(player);
+        island.save();
       }
     }
     else {
@@ -389,7 +395,7 @@ public class Sky2 implements CommandExecutor {
         rTools.deleteRegion(player.getName() + "island");
 
         player.sendMessage(plugin.out.get("command.delete.finished"));
-
+        island.save();
       }
     }
     else {
@@ -433,6 +439,7 @@ public class Sky2 implements CommandExecutor {
         island.tpHome(player);
 
         player.sendMessage(plugin.out.get("command.active.finished"));
+        island.save();
       }
 
     }
@@ -494,6 +501,8 @@ public class Sky2 implements CommandExecutor {
                 p.sendMessage(plugin.out.format("command.addfriend.friend", player.getName()));
               }
             }
+            
+            island.save();
           }
         }
         else {
@@ -548,6 +557,7 @@ public class Sky2 implements CommandExecutor {
               }
             }
             player.sendMessage(plugin.out.format("command.removefriend.starting", friend));
+            island.save();
 
           }
           else {
@@ -655,6 +665,7 @@ public class Sky2 implements CommandExecutor {
           player.sendMessage(plugin.out.format("command.clearfriends.many", deletedRows));
           break;
       }
+      island.save();
     }
     else {
       player.sendMessage(plugin.out.get("command.clearfriends.perms"));
