@@ -93,7 +93,7 @@ public class Island {
       this.friends = members;
 
       for (int i = 0; i < this.friends.size(); i++) {
-        System.out.println(i + ": " + this.friends.get(i));
+        plugin.debug(i + ": " + this.friends.get(i), "debug");
       }
     }
     else {
@@ -189,7 +189,7 @@ public class Island {
     return false;
   }
 
-  public void addFriend(String playerName) throws SQLException, Exception {
+  public void addFriend(String playerName) throws SQLException{
     String addMember = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`)"
             + "VALUES ('" + this.id + "', '" + playerName + "');";
     //remove him from the database
@@ -367,8 +367,10 @@ public class Island {
   }
   
   public void save(){
+    plugin.debug("saving island of " + ownerNick, "debug");
     if(plugin.playerIslands.containsKey(this.ownerNick)){
       plugin.playerIslands.remove(this.ownerNick);
+      plugin.debug("deleting old data", "debug");
     }
     
     plugin.playerIslands.put(this.ownerNick, this);
