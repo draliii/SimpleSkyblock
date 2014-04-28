@@ -189,14 +189,19 @@ public class Island {
     return false;
   }
 
-  public void addFriend(String playerName) throws SQLException {
+  public void addFriend(String playerName) throws SQLException, Exception {
     String addMember = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`)"
             + "VALUES ('" + this.id + "', '" + playerName + "');";
     //remove him from the database
-
-
-    friends.add(playerName);
     plugin.database.updateSQL(addMember);
+
+    try{
+      friends.add(playerName);
+    }
+    catch(NullPointerException e){
+      this.loadSQL();
+      friends.add(playerName);
+    }
   }
 
   public boolean removeFriend(String playerName) throws SQLException {
