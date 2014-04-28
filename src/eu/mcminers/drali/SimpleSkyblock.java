@@ -359,16 +359,19 @@ public class SimpleSkyblock extends JavaPlugin {
         result += strings[i];
         System.out.println(result);
       }
+      
+      long microunix = System.currentTimeMillis();
+      
       switch (type) {
         case "severe":
-          this.getLogger().severe("[DEBUG] " + result);
+          this.getLogger().severe("[DEBUG] [t" + microunix + "] " + result);
           break;
         case "warning":
-          this.getLogger().warning("[DEBUG] " + result);
+          this.getLogger().warning("[DEBUG] [t" + microunix + "] " + result);
           break;
         case "info":
         default:
-          this.getLogger().info("[DEBUG] " + result);
+          this.getLogger().info("[DEBUG] [t" + microunix + "] " + result);
           break;
       }
     }
@@ -441,16 +444,17 @@ public class SimpleSkyblock extends JavaPlugin {
 
   public void debug(String message, String type) {
     if (this.debug) {
+      long microunix = System.currentTimeMillis();
       switch (type) {
         case "severe":
-          this.getLogger().severe("[DEBUG] " + message);
+          this.getLogger().severe("[DEBUG] [t" + microunix + "] " + message);
           break;
         case "warning":
-          this.getLogger().warning("[DEBUG] " + message);
+          this.getLogger().warning("[DEBUG] [t" + microunix + "] " + message);
           break;
         case "info":
         default:
-          this.getLogger().info("[DEBUG] " + message);
+          this.getLogger().info("[DEBUG] [t" + microunix + "] " + message);
           break;
       }
     }
