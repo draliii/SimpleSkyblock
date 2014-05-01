@@ -208,7 +208,7 @@ public class StringHandler {
     defaultStrings.put("admin.config.island.spacing", "Island spacing can not be smaller than 0");
     defaultStrings.put("admin.sql.connecting", "Connecting to database...");
     defaultStrings.put("admin.sql.connected", "Database connected...");
-    defaultStrings.put("admin.sql.ex", "Could not connect to MySQL server! Reason: %s");
+    defaultStrings.put("admin.sql.ex", "Could not connect to MySQL server!");
     defaultStrings.put("admin.sql.exx", "JDBC Driver not found!");
     defaultStrings.put("admin.sql.fail", "MySQL connection couldn't be made.");
     defaultStrings.put("admin.sql.disconnected", "Database was disconnected");
