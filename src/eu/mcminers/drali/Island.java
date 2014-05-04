@@ -206,6 +206,7 @@ public class Island {
 
   public boolean removeFriend(String playerName) throws SQLException {
     if (this.isFriend(playerName)) {
+      this.friends.remove(playerName);
       String deleteMember = "DELETE FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + this.id + "'"
               + "AND LOWER(member) = LOWER('" + playerName + "');";
       plugin.database.updateSQL(deleteMember);
@@ -223,7 +224,7 @@ public class Island {
 
     return deletedRows;
   }
-
+  
   /**
    * Checks for a place to generate an island (write data about island into
    * database, delete data about previous owner).
