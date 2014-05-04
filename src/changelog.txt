@@ -124,6 +124,14 @@ opraven dotaz z 3.0
 3-4
 pri prvnim prikazu kde se nacita ostrov se pouzije sql, dal jsou data ulozena v HashMapu a mazou se pri odpojeni hrace
 
+3-9
+pridan catch na null u addfriend
+vypis pratel pri nacitani presunut do debugu
+microunix v debugu
+
+4-1
+oprava chyb
+
 TODO:
 spojit sb friend list a sb info
 pridat moznost vypsani prav jineho hrace (sb friend list nick)
