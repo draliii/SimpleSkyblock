@@ -172,7 +172,7 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //if the world wasn't loaded
     if (skyworld == null) {
-      this.print("admin.world.fail", false, "severe", skyworld.getName());
+      this.print("admin.world.fail", false, "severe", worldName);
       Bukkit.getPluginManager().disablePlugin(this);  //disable the plugin
       return;  //return (so the plugin doesn't enable again)
     }
@@ -266,15 +266,20 @@ public class SimpleSkyblock extends JavaPlugin {
   public Coordinates getLastIsland() throws SQLException {
     String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands ORDER BY id DESC LIMIT 1;";
     ResultSet res = this.database.querySQL(sql);
+    
+    res.next();
+    if (res.getRow() == 1) {
+      return new Coordinates(res.getInt("x"), res.getInt("z"));
+    }
+    return new Coordinates(this.spawnX, this.spawnZ);
+    /*
     res.last(); //this line has to be here
     Coordinates result;
     if (res.getRow() == 1) {
-      result = new Coordinates(res.getInt("x"), res.getInt("z"));
+      return new Coordinates(res.getInt("x"), res.getInt("z"));
     }
-    else {
-      result = null;
-    }
-    return result;
+    return new Coordinates(res.getInt(this.spawnX), res.getInt(this.spawnZ));
+    */
   }
 
   /**
