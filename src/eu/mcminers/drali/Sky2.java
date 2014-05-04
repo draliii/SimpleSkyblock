@@ -548,17 +548,22 @@ public class Sky2 implements CommandExecutor {
           region.setMembers(members);
 
           if (island.removeFriend(friend)) {
-            Player[] visitors = island.getVisitors();
-            //look in the array for his nick
-            for (Player p : visitors) {
+            //inform the player that he was removed
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
+              //check nick
               if (p.getName().equalsIgnoreCase(friend)) {
-                plugin.skyTp(0, 0, p);
                 p.sendMessage(plugin.out.format("command.removefriend.nolongerfriend", player.getName()));
+                //tp him out if he is on the island
+                if(p.getLocation().getX() > island.x - 50
+                        && p.getLocation().getX() < island.x + 50
+                        && p.getLocation().getZ() > island.z - 50
+                        && p.getLocation().getZ() < island.z + 50){
+                  plugin.skyTp(0, 0, p);
+                }
               }
             }
             player.sendMessage(plugin.out.format("command.removefriend.starting", friend));
             island.save();
-
           }
           else {
             player.sendMessage(plugin.out.format("command.removefriend.alreadyremoved", friend));
