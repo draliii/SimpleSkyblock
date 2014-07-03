@@ -34,19 +34,19 @@ public class PlayerDeath implements Listener {
       if (e.getEntity() instanceof Player) {
         //get the Player
         Player player = (Player) e.getEntity();
-        System.out.println("onDeath");
+        //System.out.println("onDeath");
 
         if (player.getWorld() == plugin.skyworld) {
 
-          player.sendMessage("You have died. Your island will be reseted.");
           plugin.write(null, "debug.player-death", "info", true, player.getName());
+          plugin.write(player, "plugin.ondeath.starting", "info", false);
 
           Island island = new Island(player.getName(), plugin);
           try {
             island.load();
           }
           catch (SQLException ex) {
-            plugin.print("admin.sqlexception", false, "severe", "loading island data of " + player.getName() + "after his death.");
+            plugin.write(null, "admin.sql.ex-load", "severe", player.getName());
           }
           if (island.exists) {
 
@@ -54,10 +54,10 @@ public class PlayerDeath implements Listener {
               island.reset();
             }
             catch (Exception ex) {
-              plugin.print("admin.sqlexception", false, "severe", "reseting island of " + player.getName() + "after his death.");
+              plugin.write(null, "admin.sql.ex-reset", "severe", player.getName());
             }
 
-            player.sendMessage("Your island was reseted");
+            plugin.write(player, "plugin.ondeath.finished", "info");
           }
         }
       }
@@ -70,14 +70,14 @@ public class PlayerDeath implements Listener {
       //get the Player
       Player player = (Player) e.getPlayer();
 
-      System.out.println("onRespawn");
+      //System.out.println("onRespawn");
       if (player.getWorld() == plugin.skyworld) {
         Island island = new Island(player.getName(), plugin);
         try {
           island.load();
         }
         catch (SQLException ex) {
-          plugin.print("admin.sqlexception", false, "severe", "loading island data of " + player.getName() + "after his death.");
+          plugin.write(null, "admin.sql.ex-load", "severe", player.getName());
         }
 
         if (!island.exists) {

@@ -39,16 +39,16 @@ public class SkyAdmin implements CommandExecutor {
     if (!plugin.checkOK) {
       //output to console
       if (!(sender instanceof Player)) {
-        plugin.print("admin.loading-failed", false, "severe", plugin.checkReason);
+        plugin.write(null, "admin.loading-failed", "severe", plugin.checkReason);
         return true;
       }
       //output to admin player
       if(plugin.checkPerk((Player) sender, "simpleskyblock.admin")){
-        sender.sendMessage(plugin.out.format("admin.loading-failed", plugin.checkReason));
+        plugin.write(sender, "admin.loading-failed", "severe", plugin.checkReason);
         return true;
       }
       //output to all other players
-      sender.sendMessage(plugin.out.get("plugin.loading-failed"));
+      plugin.write(sender, "plugin.loading-failed", "severe");
       return true;
     }
     
@@ -63,7 +63,7 @@ public class SkyAdmin implements CommandExecutor {
           case "home":
             if (args.length == 2) {
               if (isConsole) {
-                plugin.print("Sorry, this command is not available in the console", false, "info");
+                plugin.write(null, "admin.noconsole", "info");
                 return true;
               }
               try {

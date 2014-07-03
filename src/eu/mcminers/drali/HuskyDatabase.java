@@ -1,7 +1,6 @@
 package eu.mcminers.drali;
 
 import java.sql.Connection;
-import org.bukkit.plugin.Plugin;
 
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL,

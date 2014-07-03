@@ -31,22 +31,22 @@ public class Sky2 implements CommandExecutor {
     if (!plugin.checkOK) {
       //output to console
       if (!(sender instanceof Player)) {
-        plugin.print("admin.loading-failed", false, "severe", plugin.checkReason);
+        plugin.write(null, "admin.loading-failed", "severe", plugin.checkReason);
         return true;
       }
       //output to admin player
       if(plugin.checkPerk((Player) sender, "simpleskyblock.admin")){
-        sender.sendMessage(plugin.out.format("admin.loading-failed", plugin.checkReason));
+        plugin.write(sender, "admin.loading-failed", "severe", plugin.checkReason);
         return true;
       }
       //output to all other players
-      sender.sendMessage(plugin.out.get("plugin.loading-failed"));
+      plugin.write(sender, "plugin.loading-failed", "severe");
       return true;
     }
 
     //deny access to non-player senders
     if (!(sender instanceof Player)) {
-      plugin.print("", false, "info");
+      plugin.write(null, "plugin.noconsole", "info");
       return true;
     }
 

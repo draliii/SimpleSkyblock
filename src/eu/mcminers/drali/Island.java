@@ -57,7 +57,7 @@ public class Island {
   }
 
   private void loadSQL() throws SQLException {
-        String sql = "SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, islands.date,"
+    String sql = "SELECT islands.id, islands.nick, islands.x, islands.z, islands.active, islands.date,"
             + "members.id, members.island_id, members.member "
             + "FROM " + plugin.getMysqlPrefix() + "_islands islands "
             + "LEFT JOIN " + plugin.getMysqlPrefix() + "_members members "
@@ -93,7 +93,7 @@ public class Island {
       this.friends = members;
 
       for (int i = 0; i < this.friends.size(); i++) {
-        plugin.write(null, "debug.members-list", "info", true, i, this.friends.get(i));
+        plugin.write(null, "debug.members-list", "debug", i, this.friends.get(i));
       }
     }
     else {
@@ -302,7 +302,7 @@ public class Island {
      int rowsUpdated = plugin.database.updateSQL(updateOldData);
      plugin.debug("rows updated: " + rowsUpdated, "info");
      }*/
-    plugin.write(null, "debug.sql-queries-done", "info", true);
+    plugin.write(null, "debug.sql-queries-done", "debug");
     return true;
   }
 
@@ -370,7 +370,7 @@ public class Island {
   }
   
   public void save(){
-    plugin.write(null, "debug.saving-island-data", "info", true, ownerNick);
+    plugin.write(null, "debug.saving-island-data", "debug", ownerNick);
     
     if(plugin.playerIslands.containsKey(this.ownerNick)){
       plugin.playerIslands.remove(this.ownerNick);

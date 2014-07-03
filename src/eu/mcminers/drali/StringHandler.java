@@ -210,6 +210,8 @@ public class StringHandler {
     defaultStrings.put("admin.sql.connected", "Database connected...");
     defaultStrings.put("admin.sql.ex", "Could not connect to MySQL server!");
     defaultStrings.put("admin.sql.exx", "JDBC Driver not found!");
+    defaultStrings.put("admin.sql.ex-load", "There has been an error when loading island of %s after his death!");
+    defaultStrings.put("admin.sql.ex-reset", "There has been an error when reseting island of %s after his death!");
     defaultStrings.put("admin.sql.fail", "MySQL connection couldn't be made.");
     defaultStrings.put("admin.sql.disconnected", "Database was disconnected");
     defaultStrings.put("admin.sql.disconnectedfail", "Error when disconnecting database");
@@ -248,8 +250,11 @@ public class StringHandler {
     defaultStrings.put("plugin.region.leave", "You are leaving a protected island area. (%s)");
     defaultStrings.put("plugin.region.saving", "Saving regions...");
     defaultStrings.put("plugin.region.deleting", "Deleting region: %s");
+    defaultStrings.put("plugin.region.already-protected", "You already have a region!");
 
-
+    defaultStrings.put("plugin.ondeath.starting", "You have died. Your island will be reseted!");
+    defaultStrings.put("plugin.ondeath.finished", "Your island was reseted.");
+    
     defaultStrings.put("command.error.noparameters", "No parameters given. Use /sb help to see the help");
     defaultStrings.put("command.error.unknown", "Unknown command. Use /sb help to see the help");
     defaultStrings.put("command.error.unknownparameter", "Parameter not found. Use /sb help to see the help");
@@ -290,7 +295,7 @@ public class StringHandler {
 
     defaultStrings.put("command.delete.noisland", "You don't have an island! To create it, use /sb new.");
     defaultStrings.put("command.delete.inactive", "Your island is already inactive. Use /sb active to activate it.");
-    defaultStrings.put("command.delete.starting", "Reseting your island...");
+    defaultStrings.put("command.delete.starting", "Deactivating your island...");
     defaultStrings.put("command.delete.finished", "Your island is now inactive. Type /sb active to re-activate.");
     defaultStrings.put("command.delete.perms", "You don't have permission to delete your island.");
 

@@ -85,7 +85,7 @@ public class RegionTools {
       regionManager.addRegion(region);
 
       //save the RegionManager (otherwise regions are deleted after server restart)
-      plugin.print("plugin.region.saving", true, "info");
+      plugin.write(null, "plugin.region.saving", "debug");
       regionManager.save();
       return region;
 
@@ -93,7 +93,7 @@ public class RegionTools {
     //if there is already an island with player's name
     //this should never happen
     else {
-      player.sendMessage("Your island is already protected!");
+      plugin.write(player, "plugin.region.already-protected", "info");
       return null;
     }
   }
@@ -117,9 +117,9 @@ public class RegionTools {
 
   public void deleteRegion(String id) throws ProtectionDatabaseException {
     RegionManager regionManager = this.getWorldGuard().getRegionManager(plugin.skyworld);
-    plugin.print("plugin.region.deleting", true, "info", id);
+    plugin.write(null, "plugin.region.deleting", "debug", id);
     regionManager.removeRegion(id);
-    plugin.print("plugin.region.saving", true, "info");
+    plugin.write(null, "plugin.region.saving", "debug");
     regionManager.save();
   }
 
@@ -166,17 +166,4 @@ public class RegionTools {
       plugin.database.updateSQL(SQL);
     }
   }
-
-  /*
-   @Override
-   protected void finalize() throws Throwable {
-   //just an experiment :)
-   try {
-   plugin.debug("RegionTools was garbage-collected", "info");
-   }
-   finally {
-   super.finalize();
-   }
-   }
-   */
 }

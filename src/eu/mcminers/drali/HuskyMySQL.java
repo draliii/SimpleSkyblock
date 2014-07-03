@@ -51,13 +51,13 @@ public class HuskyMySQL extends HuskyDatabase {
       //TODO: add a while cycle to try to connect to the database (in a separate thread)
       connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
 
-      plugin.print("admin.sql.connected", true, "info");
+      plugin.write(null, "admin.sql.connected", "debug");
     }
     catch (SQLException e) {
-      plugin.print("admin.sql.ex", false, "severe");
+      plugin.write(null, "admin.sql.ex", "severe");
     }
     catch (ClassNotFoundException e) {
-      plugin.print("admin.sql.exx", false, "severe");
+      plugin.write(null, "admin.sql.exx", "severe");
     }
     return connection;
   }
@@ -77,10 +77,10 @@ public class HuskyMySQL extends HuskyDatabase {
     if (connection != null) {
       try {
         connection.close();
-        plugin.print("admin.sql.disconnected", true, "info");
+        plugin.write(null, "admin.sql.disconnected", "debug");
       }
       catch (SQLException e) {
-        plugin.print("admin.sql.disconnectedfail", false, "severe");
+        plugin.write(null, "admin.sql.disconnectedfail", "severe");
         //e.printStackTrace();
       }
     }
@@ -88,7 +88,7 @@ public class HuskyMySQL extends HuskyDatabase {
 
   public ResultSet querySQL(String query) throws SQLException {
 
-    plugin.print("admin.sql.query", true, "info", query);
+    plugin.write(null, "admin.sql.query", "debug", query);
     Statement s = null;
     ResultSet ret = null;
 
@@ -102,7 +102,7 @@ public class HuskyMySQL extends HuskyDatabase {
   public int updateSQL(String sql) throws SQLException {
 
     Statement s = null;
-    plugin.print("admin.sql.query", true, "info", sql);
+    plugin.write(null, "admin.sql.query", "debug", sql);
     int result = -1;
 
     s = openConnection().createStatement();

@@ -121,12 +121,12 @@ public class SimpleSkyblock extends JavaPlugin {
     //check if all values in config exists and won't cause issues later
     if (!checkConfig()) {
       //checkCofig also prints the mistake and tells the user how to fix it
-      this.print("admin.config.general", false, "warning");
+      this.write(null, "admin.config.general", "warning");
       this.checkOK = false;
       this.checkReason += "admin.config.general";
       return; //stop loading the plugin
     }
-    this.print("admin.config.ok", true, "info");
+    this.write(null, "admin.config.ok", "debug");
 
     //write the config to disk
     //not really sure how this works
@@ -140,12 +140,12 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //connect to it
     Connection c = null;
-    this.print("admin.sql.connecting", true, "info");
+    this.write(null, "admin.sql.connecting", "debug");
     c = database.openConnection();
 
     //disable plugin if database wasn't connected
     if (!database.checkConnection()) {
-      this.print("admin.sql.fail", false, "severe");
+      this.write(null, "admin.sql.fail", "severe");
       this.checkOK = false;
       this.checkReason += "admin.sql.fail";
       return; //stop loading the plugin
@@ -174,12 +174,12 @@ public class SimpleSkyblock extends JavaPlugin {
      }*/
 
     //load the skyworld
-    this.print("admin.world.loading", true, "info");
+    this.write(null, "admin.world.loading", "info");
     skyworld = this.getServer().getWorld(worldName);
 
     //if the world wasn't loaded
     if (skyworld == null) {
-      this.print("admin.world.fail", false, "severe", worldName);
+      this.write(null, "admin.world.fail", "severe", worldName);
       this.checkOK = false;
       this.checkReason += "admin.world.fail";
       return; //stop loading the plugin
@@ -189,7 +189,7 @@ public class SimpleSkyblock extends JavaPlugin {
     //also, players are teleported here when deactivating your island
     if (generateSpawn) {
       if (skyworld.getBlockAt(0, islandY - 1, 0).getType() == Material.AIR) {
-        this.print("admin.spawn.blocks", true, "info");
+        this.write(null, "admin.spawn.blocks", "debug");
         for (int i = -1; i < 2; i++) {
           for (int j = -1; j < 2; j++) {
             Block blockToSet = skyworld.getBlockAt(i, islandY, j);
@@ -204,7 +204,7 @@ public class SimpleSkyblock extends JavaPlugin {
       RegionTools rTools = new RegionTools(this);
       RegionManager rm = rTools.getWorldGuard().getRegionManager(skyworld);
       if (!(rm.hasRegion("skyspawn"))) {
-        this.print("admin.spawn.region", true, "info");
+        this.write(null, "admin.spawn.region", "debug");
         //make a region, and add it
         rm.addRegion(rTools.makeRegion("SkySpawn", 0, 0));
         try {
@@ -216,16 +216,11 @@ public class SimpleSkyblock extends JavaPlugin {
       }
     }
 
-    //Register commands
-    skyCommand = new Sky2(this);
-    getCommand("sb").setExecutor(skyCommand);
-    getCommand("sbadmin").setExecutor(new SkyAdmin(this));
-
     //getServer().getPluginManager().registerEvents(this, this);
     //new PlayerDeath(this);
     getServer().getPluginManager().registerEvents(new PlayerDeath(this), this);
 
-    this.print("admin.enabled", false, "info");
+    this.write(null, "admin.enabled", "info");
 
   }
 
@@ -238,7 +233,7 @@ public class SimpleSkyblock extends JavaPlugin {
     if (database != null) {
       database.closeConnection();
     }
-    this.print("admin.disabled", false, "info");
+    this.write(null, "admin.disabled", "info");
   }
 
   /**
@@ -365,74 +360,7 @@ public class SimpleSkyblock extends JavaPlugin {
     player.sendMessage(out.get("plugin.help.content"));
   }
 
-  public void debug(String[] strings, String type) {
-    if (this.debug) {
-      String result = "";
-      for (int i = 0; i < strings.length; i++) {
-        result += strings[i];
-        System.out.println(result);
-      }
-
-      long microunix = System.currentTimeMillis();
-
-      switch (type) {
-        case "severe":
-          this.getLogger().severe("[DEBUG] [t" + microunix + "] " + result);
-          break;
-        case "warning":
-          this.getLogger().warning("[DEBUG] [t" + microunix + "] " + result);
-          break;
-        case "info":
-        default:
-          this.getLogger().info("[DEBUG] [t" + microunix + "] " + result);
-          break;
-      }
-    }
-  }
-
-  /**
-   * Prints the message specified by the key
-   *
-   * @param key Key to the output string in StringHandler yaml
-   * @param isDebug when set to true, messages will be shown only if the debug
-   * option is on
-   * @param type log level (info, warning, severe etc...)
-   */
-  public void print(String key, boolean isDebug, String type) {
-    //load strings to one string
-    String message = out.get(key);
-    //if this is a debug information
-    if (isDebug) {
-      this.debug(message);
-    }
-    else {
-      //print lines
-      this.out(message, type);
-    }
-  }
-
-  /**
-   * Prints the message specified by the key with parameters
-   *
-   * @param key Key to the output string in StringHandler yaml
-   * @param isDebug when set to true, messages will be shown only if the debug
-   * option is on
-   * @param type log level (info, warning, severe etc...)
-   */
-  public void print(String key, boolean isDebug, String type, Object... args) {
-    //load strings to one string
-    String message = out.format(key, args);
-    //if this is a debug information
-    if (isDebug) {
-      this.debug(message);
-    }
-    else {
-      //print lines
-      this.out(message, type);
-    }
-  }
-
-  public void out(String message, String type) {
+  private void out(String message, String type) {
     switch (type) {
       case "severe":
         this.getLogger().severe(message);
@@ -447,26 +375,38 @@ public class SimpleSkyblock extends JavaPlugin {
     }
   }
 
-  public void debug(String message) {
+  private void debug(String message) {
     if (this.debug) {
       long microunix = System.currentTimeMillis();
       this.getLogger().info("[DEBUG] [t" + microunix + "] " + message);
     }
   }
-  
-  public void write(CommandSender sender, String key, Object... args){
-    this.write(sender, key, "info", false, args);
-  }
 
-  public void write(CommandSender sender, String key, String type, Boolean debug, Object... args) {
+  /**
+   * Prints 
+   * 
+   * @param sender the player to send the message to (use null to send to console)
+   * @param key message key from StringHandler
+   * @param type debug, info, warn or severe (default is info)
+   * @param args args to fill to the key string in case there are any
+   */
+  public void write(CommandSender sender, String key, String type, Object... args) {
     String output = this.out.format(key, args);
+    //console output
     if (!(sender instanceof Player)) {
-      if(debug){
+      //debug message
+      if(type.equals("debug")){
         this.debug(output);
       }
+      //normal message
       else{
-        //print normally
+        this.out(output, type);
       }
+    }
+    //player output
+    else{
+      Player player = (Player) sender;
+      player.sendMessage(output);
     }
   }
 
@@ -518,35 +458,35 @@ public class SimpleSkyblock extends JavaPlugin {
     //TODO check if mysql ip is exists
     boolean configOk = true;
     if (mysqlIp.equals("")) {
-      this.print("admin.config.sql.ip", false, "severe");
+      this.write(null, "admin.config.sql.ip", "severe");
       configOk = false;
     }
     if (mysqlPort.equals("")) {
-      this.print("admin.config.sql.port", false, "severe");
+      this.write(null, "admin.config.sql.port", "severe");
       configOk = false;
     }
     if (mysqlDatabase.equals("")) {
-      this.print("admin.config.sql.database", false, "severe");
+      this.write(null, "admin.config.sql.database", "severe");
       configOk = false;
     }
     if (mysqlUser.equals("")) {
-      this.print("admin.config.sql.user", false, "severe");
+      this.write(null, "admin.config.sql.user", "severe");
       configOk = false;
     }
     if (mysqlPass.equals("")) {
-      this.print("admin.config.sql.password", false, "severe");
+      this.write(null, "admin.config.sql.password", "severe");
       configOk = false;
     }
     if (islandY < 0 || islandY > 250) {
-      this.print("admin.config.island.height", false, "severe");
+      this.write(null, "admin.config.island.height", "severe");
       configOk = false;
     }
     if (islandSize < 0 || (islandSize % 2 == 1)) {
-      this.print("admin.config.island.size", false, "severe");
+      this.write(null, "admin.config.island.size", "severe");
       configOk = false;
     }
     if (islandSpacing < 0) {
-      this.print("admin.config.island.spacing", false, "severe");
+      this.write(null, "admin.config.island.spacing", "severe");
       configOk = false;
     }
 
