@@ -27,6 +27,23 @@ public class Sky2 implements CommandExecutor {
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     //new, reset, delete, home, home nick
 
+    //do not execute the command if plugin isn't loaded correctly
+    if (!plugin.checkOK) {
+      //output to console
+      if (!(sender instanceof Player)) {
+        plugin.print("admin.loading-failed", false, "severe", plugin.checkReason);
+        return true;
+      }
+      //output to admin player
+      if(plugin.checkPerk((Player) sender, "simpleskyblock.admin")){
+        sender.sendMessage(plugin.out.format("admin.loading-failed", plugin.checkReason));
+        return true;
+      }
+      //output to all other players
+      sender.sendMessage(plugin.out.get("plugin.loading-failed"));
+      return true;
+    }
+
     //deny access to non-player senders
     if (!(sender instanceof Player)) {
       plugin.print("", false, "info");
@@ -433,7 +450,7 @@ public class Sky2 implements CommandExecutor {
         island.activate();
 
         //make a new region and restore the previous player settings
-        rTools.restorePerms(rTools.createRegion(island.x, island.z, player), island.id);
+        rTools.restorePerms(rTools.createRegion(island.x, island.z, player), island);
 
         //teleport to home
         island.tpHome(player);
@@ -501,7 +518,7 @@ public class Sky2 implements CommandExecutor {
                 p.sendMessage(plugin.out.format("command.addfriend.friend", player.getName()));
               }
             }
-            
+
             island.save();
           }
         }
@@ -554,10 +571,10 @@ public class Sky2 implements CommandExecutor {
               if (p.getName().equalsIgnoreCase(friend)) {
                 p.sendMessage(plugin.out.format("command.removefriend.nolongerfriend", player.getName()));
                 //tp him out if he is on the island
-                if(p.getLocation().getX() > island.x - 50
+                if (p.getLocation().getX() > island.x - 50
                         && p.getLocation().getX() < island.x + 50
                         && p.getLocation().getZ() > island.z - 50
-                        && p.getLocation().getZ() < island.z + 50){
+                        && p.getLocation().getZ() < island.z + 50) {
                   plugin.skyTp(0, 0, p);
                 }
               }

@@ -196,13 +196,13 @@ public class StringHandler {
   private static void setDefaults() {
     // strings which allow more than one line will be a list
     defaultStrings.put("admin.config.ok", "Config loaded succesfully");
-    defaultStrings.put("admin.config.general", "Check and fix your config.yml to load SimpleSkyblock succesfully");
+    defaultStrings.put("admin.config.general", "There is something wrong in the comfig.yml. ");
     defaultStrings.put("admin.config.loading", "Loading config...");
-    defaultStrings.put("admin.config.sql.ip", "MySQL IP not set in config.");
-    defaultStrings.put("admin.config.sql.port", "MySQL port not set in config.");
-    defaultStrings.put("admin.config.sql.database", "MySQL database not set in config.");
-    defaultStrings.put("admin.config.sql.user", "MySQL user not set in config.");
-    defaultStrings.put("admin.config.sql.password", "MySQL password not set in config.message");
+    defaultStrings.put("admin.config.sql.ip", "MySQL IP not set in config. ");
+    defaultStrings.put("admin.config.sql.port", "MySQL port not set in config. ");
+    defaultStrings.put("admin.config.sql.database", "MySQL database not set in config. ");
+    defaultStrings.put("admin.config.sql.user", "MySQL user not set in config. ");
+    defaultStrings.put("admin.config.sql.password", "MySQL password not set in config.message. ");
     defaultStrings.put("admin.config.island.height", "Island height has unreachable value. Choose a number between 0 and 250");
     defaultStrings.put("admin.config.island.size", "Island size can not be smaller than 0 and it has to be divisible by 2");
     defaultStrings.put("admin.config.island.spacing", "Island spacing can not be smaller than 0");
@@ -226,6 +226,9 @@ public class StringHandler {
     defaultStrings.put("admin.tp.inactive", "Forcing teleport to an inactive island!");
     defaultStrings.put("admin.tp.nonfriend", "WARNING! You are teleporting to an island whose owner didn't add you as his friend.");
 
+    defaultStrings.put("admin.loading-failed", "The SimpleSkyblock plugin is disabled. Reason: %s");
+    defaultStrings.put("plugin.loading-failed", "Sorry, the SimpleSkyblock plugin is disabled. Please contact server administrators.");
+    
     defaultStrings.put("plugin.headline", "   &c-&e-&c-&e-&c-&e- &c[&e&o%s&c] &e-&c-&e-&c-&e-&c-&e");
     defaultStrings.put("plugin.help.name", "Skyblock Help");
     defaultStrings.put("plugin.help.content",

@@ -35,8 +35,10 @@ public class SimpleSkyblock extends JavaPlugin {
   private FileConfiguration pluginConfig;
   public HuskyMySQL database;
   public HashMap<String, Island> playerIslands = new HashMap<>();
-  //
   public StringHandler out;
+  public boolean checkOK = true;
+  public String checkReason = "";
+  //
   private static final String CONF_ISLAND_Y = "island-height";
   private static final String CONF_ISLAND_SIZE = "island-size";
   private static final String CONF_ISLAND_SPACING = "island-spacing";
@@ -95,6 +97,15 @@ public class SimpleSkyblock extends JavaPlugin {
   @Override
   public void onEnable() {
     setupPermissions(); //connect to Vault (permission handler)
+    
+    //register commands
+    skyCommand = new Sky2(this);
+    getCommand("sb").setExecutor(skyCommand);
+    getCommand("sbadmin").setExecutor(new SkyAdmin(this));
+
+    //getServer().getPluginManager().registerEvents(this, this);
+    //new PlayerDeath(this);
+    getServer().getPluginManager().registerEvents(new PlayerDeath(this), this);
 
     this.saveDefaultConfig();  //create config if there isn't one
     pluginConfig = this.getConfig();  //load config data into a variable
@@ -110,12 +121,9 @@ public class SimpleSkyblock extends JavaPlugin {
     if (!checkConfig()) {
       //checkCofig also prints the mistake and tells the user how to fix it
       this.print("admin.config.general", false, "warning");
-
-      //disable the plugin
-      Bukkit.getPluginManager().disablePlugin(this);
-      //return (so the plugin doesn't enable again)
-      //TODO: maybe find a better way to do this...
-      return;
+      this.checkOK = false;
+      this.checkReason += "admin.config.general";
+      return; //stop loading the plugin
     }
     this.print("admin.config.ok", true, "info");
 
@@ -132,15 +140,14 @@ public class SimpleSkyblock extends JavaPlugin {
     //connect to it
     Connection c = null;
     this.print("admin.sql.connecting", true, "info");
-    c = database.openConnection(); //the connection will be closed on the end of onDisble()
-    //this might be changed later, so that database is connected on command
-    //TODO: find out which database approach is recommended
+    c = database.openConnection();
 
     //disable plugin if database wasn't connected
     if (!database.checkConnection()) {
       this.print("admin.sql.fail", false, "severe");
-      Bukkit.getPluginManager().disablePlugin(this);
-      return;
+      this.checkOK = false;
+      this.checkReason += "admin.sql.fail";
+      return; //stop loading the plugin
     }
 
     //TODO: check if the skyblock tables exists
@@ -167,14 +174,14 @@ public class SimpleSkyblock extends JavaPlugin {
 
     //load the skyworld
     this.print("admin.world.loading", true, "info");
-    
     skyworld = this.getServer().getWorld(worldName);
 
     //if the world wasn't loaded
     if (skyworld == null) {
       this.print("admin.world.fail", false, "severe", worldName);
-      Bukkit.getPluginManager().disablePlugin(this);  //disable the plugin
-      return;  //return (so the plugin doesn't enable again)
+      this.checkOK = false;
+      this.checkReason += "admin.world.fail";
+      return; //stop loading the plugin
     }
 
     //make a small center ramp, so a spawn island can be built
