@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
@@ -122,16 +123,47 @@ public class RegionTools {
     regionManager.save();
   }
 
-  public void restorePerms(ProtectedRegion region, int islandId) throws SQLException {
-    String membersList = "SELECT member FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + islandId + "';";
+  public void restorePerms(ProtectedRegion region, Island isl) throws
+          SQLException, ProtectionDatabaseException {
+    String membersList = "SELECT member FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + isl.id + "';";
     ResultSet result = plugin.database.querySQL(membersList);
-
+    
+    if(region == null){
+      System.out.println("region is null");
+      return;
+    }
+    
     while (result.next()) {
       DefaultDomain members = new DefaultDomain();
       while (result.next()) {
         members.addPlayer(result.getString("member"));
       }
-      region.setOwners(members);
+      region.setMembers(members);
+    }
+    this.getWorldGuard().getRegionManager(plugin.skyworld).save();
+  }
+
+  public void savePerms(ProtectedRegion region, Island isl) throws SQLException {
+    Set<String> membersSet = region.getMembers().getPlayers();
+    Set<String> ownersSet = region.getOwners().getPlayers();
+    ownersSet.remove(isl.ownerNick);
+
+    if (!membersSet.isEmpty() || !ownersSet.isEmpty()) {
+
+      String friends = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`) VALUES ";
+      for (String nick : membersSet) {
+        friends += "('" + isl.id + "','" + nick + "'), ";
+      }
+
+      for (String nick : ownersSet) {
+        friends += "('" + isl.id + "','" + nick + "'), ";
+      }
+
+      friends += ";";
+
+      String SQL = friends.replace(", ;", ";");
+
+      plugin.database.updateSQL(SQL);
     }
   }
 
