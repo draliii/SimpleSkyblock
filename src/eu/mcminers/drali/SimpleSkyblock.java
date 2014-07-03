@@ -66,8 +66,8 @@ public class SimpleSkyblock extends JavaPlugin {
   private static final String CONF_RESET_COOLDOWN = "island-reset-cooldown";
   public World skyworld;
   private String worldName;
-  public int islandY;
-  public int islandSize;
+  private int islandY;
+  private int islandSize;
   private int islandSpacing;
   private boolean generateSpawn;
   private boolean generateRegion;
@@ -265,6 +265,9 @@ public class SimpleSkyblock extends JavaPlugin {
   public int getISLANDS_Y() {
     return this.islandY;
   }
+  public int getIslandSize() {
+    return this.islandSize;
+  }
 
   public Coordinates getLastIsland() throws SQLException {
     String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands ORDER BY id DESC LIMIT 1;";
@@ -383,7 +386,7 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   /**
-   * Prints 
+   * Prints out a message
    * 
    * @param sender the player to send the message to (use null to send to console)
    * @param key message key from StringHandler

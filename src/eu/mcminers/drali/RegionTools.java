@@ -99,11 +99,11 @@ public class RegionTools {
   }
 
   private BlockVector getProtectionVectorLeft(int x, int z) {
-    return new BlockVector(x + (plugin.islandSize / 2), 255, z + (plugin.islandSize / 2));
+    return new BlockVector(x + (plugin.getIslandSize() / 2), 255, z + (plugin.getIslandSize() / 2));
   }
 
   private BlockVector getProtectionVectorRight(int x, int z) {
-    return new BlockVector(x - (plugin.islandSize / 2), 0, z - (plugin.islandSize / 2));
+    return new BlockVector(x - (plugin.getIslandSize() / 2), 0, z - (plugin.getIslandSize() / 2));
   }
 
   public WorldGuardPlugin getWorldGuard() {

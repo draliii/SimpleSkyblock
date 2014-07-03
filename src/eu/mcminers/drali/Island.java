@@ -130,7 +130,7 @@ public class Island {
   }
 
   public void tpHome(Player player) {
-    int h = plugin.islandY;
+    int h = plugin.getISLANDS_Y();
 
     //check until two safe blocks (air) are found
     while (plugin.skyworld.getBlockAt(x, h, z).getType() != Material.AIR
@@ -150,11 +150,11 @@ public class Island {
 
     //get max and min value (area of the island with center x and z)
     //y value doesn't matter
-    int maxx = this.x + (plugin.islandSize / 2);
-    int maxz = this.z + (plugin.islandSize / 2);
+    int maxx = this.x + (plugin.getIslandSize() / 2);
+    int maxz = this.z + (plugin.getIslandSize() / 2);
 
-    int minx = this.x - (plugin.islandSize / 2);
-    int minz = this.z - (plugin.islandSize / 2);
+    int minx = this.x - (plugin.getIslandSize() / 2);
+    int minz = this.z - (plugin.getIslandSize() / 2);
 
     int px;
     int pz;
@@ -329,11 +329,11 @@ public class Island {
   public void deleteItems() {
     List<Entity> entList = plugin.skyworld.getEntities();//get all entities in the world
 
-    int maxx = this.x + (plugin.islandSize / 2);
-    int maxz = this.z + (plugin.islandSize / 2);
+    int maxx = this.x + (plugin.getIslandSize() / 2);
+    int maxz = this.z + (plugin.getIslandSize() / 2);
 
-    int minx = this.x - (plugin.islandSize / 2);
-    int minz = this.z - (plugin.islandSize / 2);
+    int minx = this.x - (plugin.getIslandSize() / 2);
+    int minz = this.z - (plugin.getIslandSize() / 2);
 
     int px;
     int pz;

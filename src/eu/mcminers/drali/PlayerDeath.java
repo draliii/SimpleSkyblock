@@ -82,11 +82,11 @@ public class PlayerDeath implements Listener {
 
         if (!island.exists) {
           //tp to spawn
-          Location loc = new Location(plugin.skyworld, 0, plugin.islandY, 0);
+          Location loc = new Location(plugin.skyworld, 0, plugin.getISLANDS_Y(), 0);
           e.setRespawnLocation(loc);
         }
         else {
-          Location loc = new Location(plugin.skyworld, island.x, plugin.islandY, island.z);
+          Location loc = new Location(plugin.skyworld, island.x, plugin.getISLANDS_Y(), island.z);
           e.setRespawnLocation(loc);
         }
       }

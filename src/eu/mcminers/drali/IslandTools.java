@@ -164,9 +164,9 @@ public class IslandTools {
     catch (MaxChangedBlocksException e) {
       // As of the blocks are unlimited this should not be called
     }*/
-    for (int x = centerX - (plugin.islandSize / 2); x <= centerX + (plugin.islandSize / 2); x++) {
+    for (int x = centerX - (plugin.getIslandSize() / 2); x <= centerX + (plugin.getIslandSize() / 2); x++) {
       for (int y = 0; y < plugin.skyworld.getMaxHeight(); y++) {
-        for (int z = centerZ - (plugin.islandSize / 2); z <= centerZ + (plugin.islandSize / 2); z++) {
+        for (int z = centerZ - (plugin.getIslandSize() / 2); z <= centerZ + (plugin.getIslandSize() / 2); z++) {
           Block block = plugin.skyworld.getBlockAt(x, y, z);
           if (block.getType() != Material.AIR) {
             //This commented line causes a lot of lag if executed
