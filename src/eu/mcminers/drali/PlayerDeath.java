@@ -39,8 +39,7 @@ public class PlayerDeath implements Listener {
         if (player.getWorld() == plugin.skyworld) {
 
           player.sendMessage("You have died. Your island will be reseted.");
-          plugin.debug(player.getName() + " has died, reseting his island", "info");
-
+          plugin.write(null, "debug.player-death", "info", true, player.getName());
 
           Island island = new Island(player.getName(), plugin);
           try {

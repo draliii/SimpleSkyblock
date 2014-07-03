@@ -93,7 +93,7 @@ public class Island {
       this.friends = members;
 
       for (int i = 0; i < this.friends.size(); i++) {
-        plugin.debug(i + ": " + this.friends.get(i), "debug");
+        plugin.write(null, "debug.members-list", "info", true, i, this.friends.get(i));
       }
     }
     else {
@@ -246,6 +246,7 @@ public class Island {
 
     IslandTools iTools = new IslandTools(plugin);
     //look for coordinates of the crds island to be generated
+    System.out.println(last.x + ", " + last.z);
     Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
     //insert data about the island into database
     
@@ -257,6 +258,7 @@ public class Island {
      }
      */
     this.exists = true;
+    this.active = true;
     this.date = System.currentTimeMillis() / 1000;
     this.x = crds.x;
     this.z = crds.z;
@@ -300,7 +302,7 @@ public class Island {
      int rowsUpdated = plugin.database.updateSQL(updateOldData);
      plugin.debug("rows updated: " + rowsUpdated, "info");
      }*/
-    plugin.debug("SQL queries done", "info");
+    plugin.write(null, "debug.sql-queries-done", "info", true);
     return true;
   }
 
@@ -368,10 +370,10 @@ public class Island {
   }
   
   public void save(){
-    plugin.debug("saving island of " + ownerNick, "debug");
+    plugin.write(null, "debug.saving-island-data", "info", true, ownerNick);
+    
     if(plugin.playerIslands.containsKey(this.ownerNick)){
       plugin.playerIslands.remove(this.ownerNick);
-      plugin.debug("deleting old data", "debug");
     }
     
     plugin.playerIslands.put(this.ownerNick, this);

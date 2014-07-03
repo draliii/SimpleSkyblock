@@ -26,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class SimpleSkyblock extends JavaPlugin {
@@ -97,7 +98,7 @@ public class SimpleSkyblock extends JavaPlugin {
   @Override
   public void onEnable() {
     setupPermissions(); //connect to Vault (permission handler)
-    
+
     //register commands
     skyCommand = new Sky2(this);
     getCommand("sb").setExecutor(skyCommand);
@@ -273,20 +274,20 @@ public class SimpleSkyblock extends JavaPlugin {
   public Coordinates getLastIsland() throws SQLException {
     String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands ORDER BY id DESC LIMIT 1;";
     ResultSet res = this.database.querySQL(sql);
-    
+
     res.next();
     if (res.getRow() == 1) {
       return new Coordinates(res.getInt("x"), res.getInt("z"));
     }
     return new Coordinates(this.spawnX, this.spawnZ);
     /*
-    res.last(); //this line has to be here
-    Coordinates result;
-    if (res.getRow() == 1) {
-      return new Coordinates(res.getInt("x"), res.getInt("z"));
-    }
-    return new Coordinates(res.getInt(this.spawnX), res.getInt(this.spawnZ));
-    */
+     res.last(); //this line has to be here
+     Coordinates result;
+     if (res.getRow() == 1) {
+     return new Coordinates(res.getInt("x"), res.getInt("z"));
+     }
+     return new Coordinates(res.getInt(this.spawnX), res.getInt(this.spawnZ));
+     */
   }
 
   /**
@@ -371,9 +372,9 @@ public class SimpleSkyblock extends JavaPlugin {
         result += strings[i];
         System.out.println(result);
       }
-      
+
       long microunix = System.currentTimeMillis();
-      
+
       switch (type) {
         case "severe":
           this.getLogger().severe("[DEBUG] [t" + microunix + "] " + result);
@@ -402,11 +403,7 @@ public class SimpleSkyblock extends JavaPlugin {
     String message = out.get(key);
     //if this is a debug information
     if (isDebug) {
-      //if debug is on
-      if (this.debug) {
-        //print lines with "[DEBUG]"
-        this.debug(message, type);
-      }
+      this.debug(message);
     }
     else {
       //print lines
@@ -427,11 +424,7 @@ public class SimpleSkyblock extends JavaPlugin {
     String message = out.format(key, args);
     //if this is a debug information
     if (isDebug) {
-      //if debug is on
-      if (this.debug) {
-        //print lines with "[DEBUG]"
-        this.debug(message, type);
-      }
+      this.debug(message);
     }
     else {
       //print lines
@@ -454,20 +447,25 @@ public class SimpleSkyblock extends JavaPlugin {
     }
   }
 
-  public void debug(String message, String type) {
+  public void debug(String message) {
     if (this.debug) {
       long microunix = System.currentTimeMillis();
-      switch (type) {
-        case "severe":
-          this.getLogger().severe("[DEBUG] [t" + microunix + "] " + message);
-          break;
-        case "warning":
-          this.getLogger().warning("[DEBUG] [t" + microunix + "] " + message);
-          break;
-        case "info":
-        default:
-          this.getLogger().info("[DEBUG] [t" + microunix + "] " + message);
-          break;
+      this.getLogger().info("[DEBUG] [t" + microunix + "] " + message);
+    }
+  }
+  
+  public void write(CommandSender sender, String key, Object... args){
+    this.write(sender, key, "info", false, args);
+  }
+
+  public void write(CommandSender sender, String key, String type, Boolean debug, Object... args) {
+    String output = this.out.format(key, args);
+    if (!(sender instanceof Player)) {
+      if(debug){
+        this.debug(output);
+      }
+      else{
+        //print normally
       }
     }
   }

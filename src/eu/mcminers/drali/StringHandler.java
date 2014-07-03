@@ -43,7 +43,7 @@ public class StringHandler {
       }
       //create a new one
       defaultFile.createNewFile();
-      plugin.debug("Generating language file", "info");
+      plugin.write(null, "admin.generating-language-file", "info", true);
     }
     catch (IOException e3) {
       //this is not an issue, since this occurs on first startup only and is solved by itself
@@ -222,12 +222,19 @@ public class StringHandler {
     defaultStrings.put("admin.noconsole", "Only players can use this command");
     defaultStrings.put("admin.enabled", "SimpleSkyblock loaded!");
     defaultStrings.put("admin.disabled", "SimpleSkyblock disabled!");
-    
+    defaultStrings.put("admin.generating-language-file", "Generating new language file");
     defaultStrings.put("admin.tp.inactive", "Forcing teleport to an inactive island!");
     defaultStrings.put("admin.tp.nonfriend", "WARNING! You are teleporting to an island whose owner didn't add you as his friend.");
 
     defaultStrings.put("admin.loading-failed", "The SimpleSkyblock plugin is disabled. Reason: %s");
     defaultStrings.put("plugin.loading-failed", "Sorry, the SimpleSkyblock plugin is disabled. Please contact server administrators.");
+    
+    defaultStrings.put("debug.sql-queries-done", "SQL queries done");
+    defaultStrings.put("debug.saving-island-data", "Saving island of %s");
+    defaultStrings.put("debug.player-death", "Player %s died, reseting his island...");
+
+    
+    defaultStrings.put("debug.members-list", "%s : %s");
     
     defaultStrings.put("plugin.headline", "   &c-&e-&c-&e-&c-&e- &c[&e&o%s&c] &e-&c-&e-&c-&e-&c-&e");
     defaultStrings.put("plugin.help.name", "Skyblock Help");
