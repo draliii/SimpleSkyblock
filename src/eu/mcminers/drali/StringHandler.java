@@ -216,7 +216,7 @@ public class StringHandler {
     defaultStrings.put("admin.sql.disconnected", "Database was disconnected");
     defaultStrings.put("admin.sql.disconnectedfail", "Error when disconnecting database");
     defaultStrings.put("admin.sql.query", "SQL: %s");
-    defaultStrings.put("admin.sql.queryrows", "SQL: %s");
+    defaultStrings.put("admin.sql.queryrows", "Rows affected: %s");
     defaultStrings.put("admin.world.loading", "Loading skyworld...");
     defaultStrings.put("admin.world.fail", "The world \"%s\" doesn't exist.");
     defaultStrings.put("admin.spawn.blocks", "Center blocks not found, creating them for you!");

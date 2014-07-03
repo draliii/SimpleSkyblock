@@ -53,7 +53,7 @@ public class Sky2 implements CommandExecutor {
     Player player = (Player) sender;
 
     if (args.length == 0) {
-      player.sendMessage(plugin.out.get("command.error.unknown"));
+      plugin.write(player, "command.error.unknown", "info");
       return true;
     }
     else if (args[0].equalsIgnoreCase("help")) {
@@ -95,20 +95,6 @@ public class Sky2 implements CommandExecutor {
           case "delete":
             cmdDelete(player);
             break;
-
-          case "getpos":
-            Coordinates last = plugin.getLastIsland();
-
-            IslandTools iTools = new IslandTools(plugin);
-            //look for coordinates of the crds island to be generated
-            Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
-            /*
-             while (!iTools.isEmpty(crds)) {
-             crds = iTools.nextIslandLocation(crds.x, crds.z);
-             }*/
-            player.sendMessage("x: " + crds.x + ", z: " + crds.z);
-            break;
-
           //the ACTIVE command
           case "active":
             cmdActive(player);
@@ -129,7 +115,7 @@ public class Sky2 implements CommandExecutor {
               friend = null;
             }
             if (args.length == 1) {
-              player.sendMessage(plugin.out.get("command.error.unknown"));
+              plugin.write(player, "command.error.unknown", "info");
               return true;
             }
             switch (args[1]) {
@@ -146,13 +132,13 @@ public class Sky2 implements CommandExecutor {
                 cmdFriendList(player);
                 break;
               default:
-                player.sendMessage(plugin.out.get("command.error.unknown"));
+                plugin.write(player, "command.error.unknown", "info");
                 break;
             }
             break;
 
           default:
-            player.sendMessage(plugin.out.get("command.error.unknown"));
+            plugin.write(player, "command.error.unknown", "info");
             break;
         }
         //after the switch
@@ -160,7 +146,7 @@ public class Sky2 implements CommandExecutor {
         return true;
       }
       catch (SQLException | ProtectedRegion.CircularInheritanceException | InvalidFlagFormat | ProtectionDatabaseException ex) {
-        player.sendMessage(plugin.out.get("command.error.exception"));
+        plugin.write(player, "command.error.exception", "info");
         ex.printStackTrace();
       }
     }
@@ -177,26 +163,26 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
       //if the database query found nothing about the player
       if (!island.exists) {
-        player.sendMessage(plugin.out.get("command.tphome.noisland"));
+        plugin.write(player, "command.tphome.noisland", "info");
       }
       //if his island is inactive
       else if (!island.active) {
-        player.sendMessage(plugin.out.get("command.tphome.inactive"));
+        plugin.write(player, "command.tphome.inactive", "info");
       }
       else {
-        player.sendMessage(plugin.out.get("command.tphome.teleporting"));
+        plugin.write(player, "command.tphome.teleporting", "info");
         island.tpHome(player);
       }
     }
     //if player doesn't have permission
     else {
-      player.sendMessage(plugin.out.get("command.tphome.perms"));
+      plugin.write(player, "command.tphome.perms", "info");
     }
   }
 
@@ -208,7 +194,7 @@ public class Sky2 implements CommandExecutor {
     //check permission
     else if (plugin.checkPerk(player, "simpleskyblock.sb.home.other")) {
       if (!visited.matches("[0-9a-zA-Z@_!\\-]{2,14}")) {
-        player.sendMessage(plugin.out.get("command.tpfriend.invalidnick"));
+        plugin.write(player, "command.tpfriend.invalidnick", "info");
       }
       else {
         //load island data
@@ -217,14 +203,14 @@ public class Sky2 implements CommandExecutor {
           island.load();
         }
         catch (SQLException e) {
-          player.sendMessage(plugin.out.get("command.error.sqlexception"));
+          plugin.write(player, "command.error.sqlexception", "info");
           e.printStackTrace();
           return;
         }
 
         //no results found (the visited nick doesn't exist)
         if (!island.exists) {
-          player.sendMessage(plugin.out.get("command.tpfriend.noisland"));
+          plugin.write(player, "command.tpfriend.noisland", "info");
           return;
         }
 
@@ -234,21 +220,21 @@ public class Sky2 implements CommandExecutor {
 
           //if the island is inactive
           if (!island.active) {
-            player.sendMessage(plugin.out.get("command.tpfriend.inactive"));
+            plugin.write(player, "command.tpfriend.inactive", "info");
             if (!op) {
               return;
             }
-            player.sendMessage(plugin.out.get("admin.tp.inactive"));
+            plugin.write(player, "admin.tp.inactive", "info");
           }
 
-          player.sendMessage(plugin.out.format("command.tpfriend.teleporting", visited));
+          plugin.write(player, "command.tpfriend.teleporting", "info", visited);
           if (!island.isFriend(player.getName())) {
-            player.sendMessage(plugin.out.get("admin.tp.nonfriend"));
+            plugin.write(player, "admin.tp.nonfriend", "info");
           }
           island.tpHome(player);
         }
         else {
-          player.sendMessage(plugin.out.format("command.tpfriend.denied", visited));
+          plugin.write(player, "command.tpfriend.denied", "info", visited);
         }
 
 
@@ -256,7 +242,7 @@ public class Sky2 implements CommandExecutor {
     }
     //if he doesn't have permission
     else {
-      player.sendMessage("command.tpfriend.perms");
+      plugin.write(player, "command.tpfriend.perms", "info");
     }
   }
 
@@ -271,13 +257,13 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
       //if no island is found
       if (!island.exists) {
-        player.sendMessage(plugin.out.get("command.info.noisland"));
+        plugin.write(player, "command.info.noisland", "info");
       }
       //if something is found
       else {
@@ -285,7 +271,7 @@ public class Sky2 implements CommandExecutor {
       }
     }
     else {
-      player.sendMessage(plugin.out.get("command.info.perms"));
+      plugin.write(player, "command.info.perms", "info");
     }
   }
 
@@ -302,7 +288,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
@@ -311,11 +297,11 @@ public class Sky2 implements CommandExecutor {
 
       //check if he has an island
       if (island.exists) {
-        player.sendMessage(plugin.out.get("command.new.exists"));
+        plugin.write(player, "command.new.exists", "info");
       }
       //if he doesn't have one yet
       else {
-        player.sendMessage(plugin.out.get("command.new.starting"));
+        plugin.write(player, "command.new.starting", "info");
 
         island.create(); //find coordinates, write into database
         //player.sendMessage("Your island is now in the database");
@@ -330,11 +316,11 @@ public class Sky2 implements CommandExecutor {
         island.tpHome(player);
         plugin.clearInventory(player);
         island.save();
-        player.sendMessage(plugin.out.get("command.new.finished"));
+        plugin.write(player, "command.new.finished", "info");
       }
     }
     else {
-      player.sendMessage(plugin.out.get("command.new.perms"));
+      plugin.write(player, "command.new.perms", "info");
     }
   }
 
@@ -347,37 +333,37 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
 
       if (!island.exists) {
-        player.sendMessage(plugin.out.get("command.reset.noisland"));
+        plugin.write(player, "command.reset.noisland", "info");
       }
       else if (!island.active) {
-        player.sendMessage(plugin.out.get("command.reset.inactive"));
+        plugin.write(player, "command.reset.inactive", "info");
       }
       else {
-        player.sendMessage(plugin.out.get("command.reset.starting"));
+        plugin.write(player, "command.reset.starting", "info");
 
         try {
           island.reset();
         }
         catch (SQLException e) {
-          player.sendMessage(plugin.out.get("command.error.sqlexception"));
+          plugin.write(player, "command.error.sqlexception", "info");
           e.printStackTrace();
           return;
         }
 
-        player.sendMessage(plugin.out.get("command.reset.finished"));
+        plugin.write(player, "command.reset.finished", "info");
 
         island.tpHome(player);
         island.save();
       }
     }
     else {
-      player.sendMessage(plugin.out.get("command.reset.perms"));
+      plugin.write(player, "command.reset.perms", "info");
     }
   }
 
@@ -391,32 +377,32 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
 
       RegionTools rTools = new RegionTools(plugin);
       if (!island.exists) {
-        player.sendMessage(plugin.out.get("command.delete.noisland"));
+        plugin.write(player, "command.delete.noisland", "info");
       }
       else if (!island.active) {
-        player.sendMessage(plugin.out.get("command.delete.inactive"));
+        plugin.write(player, "command.delete.inactive", "info");
       }
       else {
-        player.sendMessage(plugin.out.get("command.delete.starting"));
+        plugin.write(player, "command.delete.starting", "info");
 
         island.deactivate();
 
         //remove the region
         rTools.deleteRegion(player.getName() + "island");
 
-        player.sendMessage(plugin.out.get("command.delete.finished"));
+        plugin.write(player, "command.delete.finished", "info");
         island.save();
       }
     }
     else {
-      player.sendMessage(plugin.out.get("command.delete.perms"));
+      plugin.write(player, "command.delete.perms", "info");
     }
   }
 
@@ -433,17 +419,17 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
 
       RegionTools rTools = new RegionTools(plugin);
       if (!island.exists) {
-        player.sendMessage(plugin.out.get("command.active.noisland"));
+        plugin.write(player, "command.active.noisland", "info");
       }
       else if (island.active) {
-        player.sendMessage(plugin.out.get("command.active.active"));
+        plugin.write(player, "command.active.active", "info");
       }
       else {
         //set it to active in the database
@@ -455,13 +441,13 @@ public class Sky2 implements CommandExecutor {
         //teleport to home
         island.tpHome(player);
 
-        player.sendMessage(plugin.out.get("command.active.finished"));
+        plugin.write(player, "command.active.finished", "info");
         island.save();
       }
 
     }
     else {
-      player.sendMessage(plugin.out.get("command.active.perms"));
+      plugin.write(player, "command.active.perms", "info");
     }
   }
 
@@ -473,13 +459,13 @@ public class Sky2 implements CommandExecutor {
           SQLException {
     if (plugin.checkPerk(player, "simpleskyblock.sb.friend.add")) {
       if (friend == null) {
-        player.sendMessage(plugin.out.get("command.addfriend.nonick"));
+        plugin.write(player, "command.addfriend.nonick", "info");
       }
       else if (!(friend.matches("[0-9a-zA-Z@_!\\-]{2,14}"))) {
-        player.sendMessage(plugin.out.get("command.addfriend.invalidnick"));
+        plugin.write(player, "command.addfriend.invalidnick", "info");
       }
       else if (friend.equalsIgnoreCase(player.getName())) {
-        player.sendMessage(plugin.out.get("command.addfriend.self"));
+        plugin.write(player, "command.addfriend.self", "info");
       }
       else {
 
@@ -489,7 +475,7 @@ public class Sky2 implements CommandExecutor {
           island.load();
         }
         catch (SQLException e) {
-          player.sendMessage(plugin.out.get("command.error.sqlexception"));
+          plugin.write(player, "command.error.sqlexception", "info");
           e.printStackTrace();
           return;
         }
@@ -504,18 +490,18 @@ public class Sky2 implements CommandExecutor {
           region.setMembers(members);
 
           if (island.isFriend(friend)) {
-            player.sendMessage(plugin.out.format("command.addfriend.alreadyadded", friend));
+            plugin.write(player, "command.addfriend.alreadyadded", "info", friend);
           }
           //add him to the database
           else {
-            player.sendMessage(plugin.out.format("command.addfriend.starting", friend));
+            plugin.write(player, "command.addfriend.starting", "info", friend);
             island.addFriend(friend);
 
             //inform the player that he was added
             for (Player p : plugin.getServer().getOnlinePlayers()) {
               //check nick
               if (p.getName().equalsIgnoreCase(friend)) {
-                p.sendMessage(plugin.out.format("command.addfriend.friend", player.getName()));
+                plugin.write(player, "command.addfriend.friend", "info", player.getName());
               }
             }
 
@@ -523,25 +509,25 @@ public class Sky2 implements CommandExecutor {
           }
         }
         else {
-          player.sendMessage(plugin.out.get("command.addfriend.noisland"));
+          plugin.write(player, "command.addfriend.noisland", "info");
         }
       }
     }
     else {
-      player.sendMessage(plugin.out.format("command.addfriend.perms"));
+      plugin.write(player, "command.addfriend.perms", "info");
     }
   }
 
   public void cmdFriendRemove(Player player, String friend) throws SQLException {
     if (plugin.checkPerk(player, "simpleskyblock.sb.friend.remove")) {
       if (friend == null) {
-        player.sendMessage(plugin.out.get("command.removefriend.nonick"));
+        plugin.write(player, "command.removefriend.nonick", "info");
       }
       else if (!(friend.matches("[0-9a-zA-Z@_!\\-]{2,14}"))) {
-        player.sendMessage(plugin.out.get("command.removefriend.invalidnick"));
+        plugin.write(player, "command.removefriend.invalidnick", "info");
       }
       else if (friend.equalsIgnoreCase(player.getName())) {
-        player.sendMessage(plugin.out.get("command.removefriend.self"));
+        plugin.write(player, "command.removefriend.self", "info");
       }
       else {
         //load island data
@@ -550,7 +536,7 @@ public class Sky2 implements CommandExecutor {
           island.load();
         }
         catch (SQLException e) {
-          player.sendMessage(plugin.out.get("command.error.sqlexception"));
+          plugin.write(player, "command.error.sqlexception", "info");
           e.printStackTrace();
           return;
         }
@@ -569,7 +555,7 @@ public class Sky2 implements CommandExecutor {
             for (Player p : plugin.getServer().getOnlinePlayers()) {
               //check nick
               if (p.getName().equalsIgnoreCase(friend)) {
-                p.sendMessage(plugin.out.format("command.removefriend.nolongerfriend", player.getName()));
+                plugin.write(p, "command.removefriend.nolongerfriend", "info", player.getName());
                 //tp him out if he is on the island
                 if (p.getLocation().getX() > island.x - 50
                         && p.getLocation().getX() < island.x + 50
@@ -579,21 +565,21 @@ public class Sky2 implements CommandExecutor {
                 }
               }
             }
-            player.sendMessage(plugin.out.format("command.removefriend.starting", friend));
+            plugin.write(player, "command.removefriend.starting", "info", friend);
             island.save();
           }
           else {
-            player.sendMessage(plugin.out.format("command.removefriend.alreadyremoved", friend));
+            plugin.write(player, "command.removefriend.alreadyremoved", "info", friend);
           }
 
         }
         else {
-          player.sendMessage(plugin.out.get("command.removefriend.noisland"));
+          plugin.write(player, "command.removefriend.noisland", "info");
         }
       }
     }
     else {
-      player.sendMessage(plugin.out.get("command.removefriend.perms"));
+      plugin.write(player, "command.removefriend.perms", "info");
     }
 
   }
@@ -607,7 +593,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
@@ -615,7 +601,7 @@ public class Sky2 implements CommandExecutor {
       if (island.exists) {
 
         if (!island.friends.isEmpty()) {
-          player.sendMessage(plugin.out.get("command.listfriend.own"));
+          plugin.write(player, "command.listfriend.own", "info");
           String friends = "";
           for (String s : island.friends) {
             friends += s + " ";
@@ -625,7 +611,7 @@ public class Sky2 implements CommandExecutor {
 
         }
         else {
-          player.sendMessage(plugin.out.get("command.listfriend.nobodyown"));
+          plugin.write(player, "command.listfriend.nobodyown", "info");
         }
 
         String visitableIslands = "SELECT islands.id, islands.nick, islands.x, islands.z, members.id, members.island_id, members.member "
@@ -635,7 +621,7 @@ public class Sky2 implements CommandExecutor {
                 + "WHERE LOWER(members.member) = LOWER('" + player.getName() + "');";
         ResultSet rs = plugin.database.querySQL(visitableIslands);
         if (rs.next()) {
-          player.sendMessage(plugin.out.get("command.listfriend.other"));
+          plugin.write(player, "command.listfriend.other", "info");
           rs.previous();
           String friends = "";
           while (rs.next()) {
@@ -644,16 +630,16 @@ public class Sky2 implements CommandExecutor {
           player.sendMessage(friends);
         }
         else {
-          player.sendMessage(plugin.out.get("command.listfriend.nobodyother"));
+          plugin.write(player, "command.listfriend.nobodyother", "info");
         }
       }
       else {
-        player.sendMessage(plugin.out.get("command.listfriend.noisland"));
+        plugin.write(player, "command.listfriend.noisland", "info");
 
       }
     }
     else {
-      player.sendMessage(plugin.out.get("command.listfriend.perms"));
+      plugin.write(player, "command.listfriend.perms", "info");
     }
   }
 
@@ -666,7 +652,7 @@ public class Sky2 implements CommandExecutor {
         island.load();
       }
       catch (SQLException e) {
-        player.sendMessage(plugin.out.get("command.error.sqlexception"));
+        plugin.write(player, "command.error.sqlexception", "info");
         e.printStackTrace();
         return;
       }
@@ -674,23 +660,23 @@ public class Sky2 implements CommandExecutor {
 
       switch (deletedRows) {
         case 0:
-          player.sendMessage(plugin.out.get("command.clearfriends.zero"));
+          plugin.write(player, "command.clearfriends.zero", "info");
           break;
         case 1:
-          player.sendMessage(plugin.out.get("command.clearfriends.one"));
+          plugin.write(player, "command.clearfriends.one", "info");
           break;
         case 2:
         case 3:
-          player.sendMessage(plugin.out.format("command.clearfriends.twothree", deletedRows));
+          plugin.write(player, "command.clearfriends.twothree", "info", deletedRows);
           break;
         default:
-          player.sendMessage(plugin.out.format("command.clearfriends.many", deletedRows));
+          plugin.write(player, "command.clearfriends.many", "info", deletedRows);
           break;
       }
       island.save();
     }
     else {
-      player.sendMessage(plugin.out.get("command.clearfriends.perms"));
+      plugin.write(player, "command.clearfriends.perms", "info");
 
     }
   }

@@ -107,7 +107,7 @@ public class Island {
    * @throws SQLException in case something goes wrong in the database
    */
   public void load() throws SQLException {
-    if(!this.loadData()){
+    if (!this.loadData()) {
       this.loadSQL();
       plugin.playerIslands.put(ownerNick, this);
     }
@@ -189,16 +189,16 @@ public class Island {
     return false;
   }
 
-  public void addFriend(String playerName) throws SQLException{
+  public void addFriend(String playerName) throws SQLException {
     String addMember = "INSERT INTO " + plugin.getMysqlPrefix() + "_members (`island_id`, `member`)"
             + "VALUES ('" + this.id + "', '" + playerName + "');";
     //remove him from the database
     plugin.database.updateSQL(addMember);
 
-    try{
+    try {
       friends.add(playerName);
     }
-    catch(NullPointerException e){
+    catch (NullPointerException e) {
       this.loadSQL();
       friends.add(playerName);
     }
@@ -224,7 +224,7 @@ public class Island {
 
     return deletedRows;
   }
-  
+
   /**
    * Checks for a place to generate an island (write data about island into
    * database, delete data about previous owner).
@@ -233,80 +233,85 @@ public class Island {
    * @throws SQLException
    */
   public boolean create() throws SQLException {
-    //UNCOMMENT LINES: 204, 207, 224, 225-259
-
-
     //get an abandoned island (closest to [0, 0])
-    //int[] emptyIsland = plugin.getEmptyIsland();
-
-    //if the id is 0 (which can never happen in the table), it means that no empty islands (or no islands at all) were found
-    //if (emptyIsland[0] == 0) {
-    //get x, z of the island with highest ID (the latest generated, on the edge of the grid)
-    Coordinates last = plugin.getLastIsland();
-
-    IslandTools iTools = new IslandTools(plugin);
-    //look for coordinates of the crds island to be generated
-    System.out.println(last.x + ", " + last.z);
-    Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
-    //insert data about the island into database
+    Island empty = plugin.getEmptyIsland();
     
+    //if no empty island was found
+    if (empty == null) {
+      
+      //get x, z of the island with highest ID (the latest generated, on the edge of the grid)
+      Coordinates last = plugin.getLastIsland();
+
+      IslandTools iTools = new IslandTools(plugin);
+      //look for coordinates of the crds island to be generated
+      System.out.println(last.x + ", " + last.z);
+      Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
+      //insert data about the island into database
+
+
+      /*
+       while(!iTools.isEmpty(crds)){
+       crds = iTools.nextIslandLocation(crds.x, crds.z);
+       }
+       */
+      
+      this.exists = true;
+      this.active = true;
+      this.date = System.currentTimeMillis() / 1000;
+      this.x = crds.x;
+      this.z = crds.z;
+
+      String insert = "INSERT INTO " + plugin.getMysqlPrefix() + "_islands (`x`, `z`, `nick`, `date`)"
+              + "VALUES (" + this.x + ", " + this.z + ", '" + this.ownerNick + "', '" + this.date + "');";
+      plugin.database.updateSQL(insert);
+    }
     
-    
-/*
-     while(!iTools.isEmpty(crds)){
-     crds = iTools.nextIslandLocation(crds.x, crds.z);
-     }
-     */
-    this.exists = true;
-    this.active = true;
-    this.date = System.currentTimeMillis() / 1000;
-    this.x = crds.x;
-    this.z = crds.z;
+    //if an abandoned island was found
+    else {
+      //delete all players that could tphome to that island before
+      String deleteOldMembers = "DELETE FROM " + plugin.getMysqlPrefix() + "_members"
+              + " WHERE island_id = " + empty.id + ";";
+      int rowsDeleted = plugin.database.updateSQL(deleteOldMembers);
+      plugin.write(null, "admin.sql.queryrows", "debug", rowsDeleted);
 
-    String insert = "INSERT INTO " + plugin.getMysqlPrefix() + "_islands (`x`, `z`, `nick`, `date`)"
-            + "VALUES (" + this.x + ", " + this.z + ", '" + this.ownerNick + "', '" + this.date + "');";
-    plugin.database.updateSQL(insert);
-    //} //if an abandoned island was found
-    /*else {
-     //delete all players that could tphome to that island before
-     String deleteOldMembers = "DELETE FROM " + plugin.getMysqlPrefix() + "_members"
-     + " WHERE island_id = " + emptyIsland[0] + ";";
-     int rowsDeleted = plugin.database.updateSQL(deleteOldMembers);
-     plugin.debug("rows deleted: " + rowsDeleted, "info");
+      //get the previous owner's nick and delete the WG region
+      //NO NEED TO DO THIS - regions are deleted on island deactivation
+      /*String previousPlayerSql = "SELECT `nick`, `x`, `z` FROM " + plugin.getMysqlPrefix() + "_islands WHERE id = '" + emptyIsland[0] + "';";
+      ResultSet rs = plugin.database.querySQL(previousPlayerSql);
+      if (rs.crds()) {//if the query found something
+        //delete the region
+        this.x = rs.getInt("x");
+        this.z = rs.getInt("z");
+        String previousPlayer = rs.getString("nick");
+        RegionTools rTools = new RegionTools(plugin);
+        rTools.getWorldGuard().getRegionManager(plugin.skyworld).removeRegion(previousPlayer + "Island");
+        plugin.debug("Deleting region of " + previousPlayer, "info");
+      }
+      else {
+        plugin.debug("ERROR, inactive nick wasn't found", "severe");
+      }*/
 
-     //get the previous owner's nick and delete the WG region
-     String previousPlayerSql = "SELECT `nick`, `x`, `z` FROM " + plugin.getMysqlPrefix() + "_islands WHERE id = '" + emptyIsland[0] + "';";
-     ResultSet rs = plugin.database.querySQL(previousPlayerSql);
-     if (rs.crds()) {//if the query found something
-     //delete the region
-     this.x = rs.getInt("x");
-     this.z = rs.getInt("z");
-     String previousPlayer = rs.getString("nick");
-     RegionTools rTools = new RegionTools(plugin);
-     rTools.getWorldGuard().getRegionManager(plugin.skyworld).removeRegion(previousPlayer + "Island");
-     plugin.debug("Deleting region of " + previousPlayer, "info");
-     }
-     else {
-     plugin.debug("ERROR, inactive nick wasn't found", "severe");
-     }
+      this.exists = true;
+      this.active = true;
+      this.date = System.currentTimeMillis() / 1000;
+      this.id = empty.id;
+      this.x = empty.x;
+      this.z = empty.z;
+              
 
-     this.exists = true;
-     this.active = true;
-     this.date = System.currentTimeMillis() / 1000;
-
-     //clear previous data (owner, date) and replace them with new data
-     String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
-     + " SET nick = '" + this.ownerNick + "', date = '" + this.date + "', active = 1 "
-     + " WHERE id = " + emptyIsland[0]
-     + " LIMIT 1;";
-     int rowsUpdated = plugin.database.updateSQL(updateOldData);
-     plugin.debug("rows updated: " + rowsUpdated, "info");
-     }*/
+      //clear previous data (owner, date) and replace them with new data
+      String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
+              + " SET nick = '" + this.ownerNick + "', date = '" + this.date + "', active = 1 "
+              + " WHERE id = " + this.id
+              + " LIMIT 1;";
+      int rowsUpdated = plugin.database.updateSQL(updateOldData);
+      plugin.write(null, "admin.sql.queryrows", "debug", rowsUpdated);
+    }
     plugin.write(null, "debug.sql-queries-done", "debug");
     return true;
   }
 
-  public void reset() throws SQLException{
+  public void reset() throws SQLException {
     this.date = System.currentTimeMillis() / 1000;
     //update database (reset date)
     String updateOldData = "UPDATE " + plugin.getMysqlPrefix() + "_islands "
@@ -368,14 +373,14 @@ public class Island {
     plugin.database.updateSQL(updateInactiveSql);
     this.active = true;
   }
-  
-  public void save(){
+
+  public void save() {
     plugin.write(null, "debug.saving-island-data", "debug", ownerNick);
-    
-    if(plugin.playerIslands.containsKey(this.ownerNick)){
+
+    if (plugin.playerIslands.containsKey(this.ownerNick)) {
       plugin.playerIslands.remove(this.ownerNick);
     }
-    
+
     plugin.playerIslands.put(this.ownerNick, this);
   }
 }

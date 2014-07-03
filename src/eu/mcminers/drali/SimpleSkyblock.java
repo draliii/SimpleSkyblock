@@ -237,34 +237,47 @@ public class SimpleSkyblock extends JavaPlugin {
   }
 
   /**
-   * Returns the id and coordinates of a deactivated island - in case no
-   * deactivated isalnds are found, id 0 is returned.
+   * Returns a deactivated island - in case no deactivated islands are found,
+   * null is returned.
    *
    * @return {id, x, z}
    * @throws SQLException
    */
-  public int[] getEmptyIsland() throws SQLException {
+  public Island getEmptyIsland() throws SQLException {
     //select the first deactivated island in the database
-    String sql = "SELECT id, x, z FROM " + this.mysqlPrefix + "_islands WHERE active = 0 ORDER BY id ASC LIMIT 1;";
+    String sql = "SELECT id, nick, x, z, active, date "
+            + "FROM " + this.getMysqlPrefix() + "_islands "
+            + "WHERE active = 0"
+            + "ORDER BY id ASC"
+            + "LIMIT 1;";
+    
     ResultSet res = this.database.querySQL(sql);
+    
+    //jump to the last row
     res.last();
-    int[] result = new int[3];
+    
+    //if something was found
     if (res.getRow() == 1) {
-      result[0] = res.getInt("id");
-      result[1] = res.getInt("x");
-      result[2] = res.getInt("z");
+      Island result = new Island(res.getString("nick"), this);
+      
+      result.x = res.getInt("x");
+      result.z = res.getInt("z");
+      result.id = res.getInt("id");
+      result.date = res.getLong("date");
+      result.active = res.getBoolean("active");
+      result.exists = true;
+      return result;
     }
+    //if nothing was found
     else {
-      result[0] = 0;
-      result[1] = 0;
-      result[2] = 0;
+      return null;
     }
-    return result;
   }
 
   public int getISLANDS_Y() {
     return this.islandY;
   }
+
   public int getIslandSize() {
     return this.islandSize;
   }
@@ -387,8 +400,9 @@ public class SimpleSkyblock extends JavaPlugin {
 
   /**
    * Prints out a message
-   * 
-   * @param sender the player to send the message to (use null to send to console)
+   *
+   * @param sender the player to send the message to (use null to send to
+   * console)
    * @param key message key from StringHandler
    * @param type debug, info, warn or severe (default is info)
    * @param args args to fill to the key string in case there are any
@@ -398,16 +412,16 @@ public class SimpleSkyblock extends JavaPlugin {
     //console output
     if (!(sender instanceof Player)) {
       //debug message
-      if(type.equals("debug")){
+      if (type.equals("debug")) {
         this.debug(output);
       }
       //normal message
-      else{
+      else {
         this.out(output, type);
       }
     }
     //player output
-    else{
+    else {
       Player player = (Player) sender;
       player.sendMessage(output);
     }

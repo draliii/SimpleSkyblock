@@ -43,7 +43,7 @@ public class SkyAdmin implements CommandExecutor {
         return true;
       }
       //output to admin player
-      if(plugin.checkPerk((Player) sender, "simpleskyblock.admin")){
+      if (plugin.checkPerk((Player) sender, "simpleskyblock.admin")) {
         plugin.write(sender, "admin.loading-failed", "severe", plugin.checkReason);
         return true;
       }
@@ -51,7 +51,7 @@ public class SkyAdmin implements CommandExecutor {
       plugin.write(sender, "plugin.loading-failed", "severe");
       return true;
     }
-    
+
     if (args.length == 0) {
       sender.sendMessage(plugin.out.get("command.error.unknown"));
       return true;
@@ -84,6 +84,21 @@ public class SkyAdmin implements CommandExecutor {
             }
             plugin.playerIslands.clear();
             break;
+          case "getpos":
+            Coordinates last;
+            try {
+              last = plugin.getLastIsland();
+
+              IslandTools iTools = new IslandTools(plugin);
+              //look for coordinates of the crds island to be generated
+              Coordinates crds = iTools.nextIslandLocation(last.x, last.z);
+
+              sender.sendMessage("x: " + crds.x + ", z: " + crds.z);
+            }
+            catch (SQLException ex) {
+              Logger.getLogger(SkyAdmin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            break;
           case "switch":
             String nick1;
             String nick2;
@@ -91,12 +106,12 @@ public class SkyAdmin implements CommandExecutor {
               nick1 = args[1];
               nick2 = args[2];
             }
-            catch(Exception e){
+            catch (Exception e) {
               System.out.println("No nick given!");
               //NO NICKS GIVEN
               return true;
             }
-            if(!nick1.matches("[0-9a-zA-Z@_!\\-]{2,14}") || !nick2.matches("[0-9a-zA-Z@_!\\-]{2,14}")){
+            if (!nick1.matches("[0-9a-zA-Z@_!\\-]{2,14}") || !nick2.matches("[0-9a-zA-Z@_!\\-]{2,14}")) {
               //IVALID NICKS
               System.out.println("Invalid nick!");
               return true;
