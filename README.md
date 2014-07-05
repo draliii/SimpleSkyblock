@@ -23,6 +23,10 @@ Features:
  - optional *hardcore* mode -> islands are reset after player death
  - highly customizable by `config.yml` file
 
+How does it work?
+-----------------
+The islands are generated in a spiral around the center area, which stays empty and serves as a spawn area. By default, each island is sorrounded by a region 100 * 100 * 255 blocks. After a 20 block free gap, there begins another region. Each region is named after his owner (player Gigla would have a *giglaisland*). Each player can have just on island, but he can add other players to join him, as well as he can play on other islands, too. 
+ 
 Setup (for servers that weren't using skyblock before):
 -----------------------------------------------------------
 1. Place the `SimpleSkyblock.jar` to your `./plugins/` folder.
@@ -69,17 +73,29 @@ You might face one of these bugs:
  - There are duplicite nicks in the island list, such as *gigla* and *GigLa* (note that SimpleSkyblock is case insensitive, and this might cause trouble).
  - SimpleSkyblock uses regular expressions to protect the database. Some of the old island names might not be safe.
 
-To get rid of the unwanted lines, replace them with a random nick and set their `active` to `false`. Also delete their regions, so the place on the map is free for a new island.
-
+To get rid of the unwanted lines, replace them with a random nick and set their `active` to `false`. Also carefully delete their regions (`./plugins/WorldGuard/worlds/SkyworldName/regions.yml`), so the place on the map is free for a new island.
 
 
 Player commands:
 ------------
  - `/sb new` creates a new island for the player
  - `/sb reset` resets player's island, deletes invenory
- - `/sb home` teleports to island center (bedrock)
+ - `/sb home [nick]` teleports to island center (bedrock). Use this to teleport to your friends by typing their nick.
  - `/sb info` outputs information about island
-  
+ - `/sb delete` sets the island to inactive, when player decides to quit playing. New islands can be generated on the inactive ones. Note: inventory is deleted, region too.
+ - `/sb active` re-activates an island, if one changes his mind. Can be used only if the island still exists.
+ - `/sb spawn` teleports to the world's spawn location [0,0] by default
+ - `/sb friend add <nick>` adds the player to your island (he can teleport there and he is a member of the region)
+ - `/sb friend remove <nick>` removes the player from your island
+ - `/sb friend list` list of your friends and also the islands, who added you as their friend
+ - `/sb friend clear` removes all friends you have added
 
+
+Admin commands:
+--------------
+ - `/sb home <nick>` teleports you to the specified island, even if you are not added as friend there.
+ - `/sbadmin clearcache` clears the plugin cache. This causes all islands to be loaded from database again.
+ - `/sbadmin getpos` returns X and Z of the island, that will be generated next on the edge of the spiral
+ - `/sbadmin switch <nick1> <nick2>` switches locations of the two islands.
 Permissions:
 ------------------
