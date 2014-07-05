@@ -13,6 +13,15 @@ Requirements:
 
 Features:
 --------------
+ - one island for each player
+ - islands protected by region
+ - islands are resetable, in case player wants to start over
+ - unused islands can be replaced with new ones to save space
+ - teleport to own island (or friend's)
+ - more players on one island
+ - admins can switch islands' positions to let two friend play next to each other
+ - optional *hardcore* mode -> islands are reset after player death
+ - highly customizable by `config.yml` file
 
 Setup (for servers that weren't using skyblock before):
 -----------------------------------------------------------
@@ -49,11 +58,28 @@ Setup (for servers that weren't using skyblock before):
    want to use some plugin like Multiverse to make the worlds' management easier.
 7. Before any islands are created, you can change their size, height and sapces between them.
    This cannot be done later, because it would cause existing islands to collapse.
-  
-Commands:
+
+Servers that want to switch to SimpleSkyblock from deQGel's SkySMP plugin:
+-------------------------------------------------------------------------------
+The SimpleSkyblock plugin was built to replace the SkySMP plugin, so it is partly compatible with it. Default island size, island spacing, region properties and island look are same. However, since SimpleSkyblock uses database to contain island data instead of `.bin` files, it can't read anything about existing islands from the old plugin.
+
+I have created a simple terminal application that can read these files. The output of this app, a SQL INSERT query, will  enter all data about the islands you had to the database, making them accessible to SimpleSkyblcok plugin. However, it is recommended to check the output first.
+
+You might face one of these bugs:
+ - There are duplicite nicks in the island list, such as *gigla* and *GigLa* (note that SimpleSkyblock is case insensitive, and this might cause trouble).
+ - SimpleSkyblock uses regular expressions to protect the database. Some of the old island names might not be safe.
+
+To get rid of the unwanted lines, replace them with a random nick and set their `active` to `false`. Also delete their regions, so the place on the map is free for a new island.
+
+
+
+Player commands:
 ------------
- - `/sb new`
- - `/sb reset`
- - `/sb home`
- - `/sb`
+ - `/sb new` creates a new island for the player
+ - `/sb reset` resets player's island, deletes invenory
+ - `/sb home` teleports to island center (bedrock)
+ - `/sb info` outputs information about island
   
+
+Permissions:
+------------------
