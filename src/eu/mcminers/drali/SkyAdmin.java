@@ -7,6 +7,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.data.DataException;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.InvalidFlagFormat;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class SkyAdmin implements CommandExecutor {
     }
     else {
       boolean isConsole = !(sender instanceof Player);
-      if (isConsole | plugin.checkPerk((Player) sender, "simpleskyblock.admin")) {
+      if (isConsole || plugin.checkPerk((Player) sender, "simpleskyblock.admin")) {
         switch (args[0]) {
           case "home":
             if (args.length == 2) {
@@ -83,6 +84,7 @@ public class SkyAdmin implements CommandExecutor {
               }
             }
             plugin.playerIslands.clear();
+            plugin.write(sender, "admin.cachecleared", "info");
             break;
           case "getpos":
             Coordinates last;
@@ -116,6 +118,12 @@ public class SkyAdmin implements CommandExecutor {
               System.out.println("Invalid nick!");
               return true;
             }
+
+            if (nick1.equals(nick2)) {
+              plugin.write(sender, "admin.switch.samenick", "warn");
+              return true;
+            }
+
             Island drali = new Island(nick1, plugin);
             Island DJTommek = new Island(nick2, plugin);
             try {
@@ -127,7 +135,19 @@ public class SkyAdmin implements CommandExecutor {
               ex.printStackTrace();
             }
 
-            this.switchIslands(drali, DJTommek);
+            if (!drali.exists || !DJTommek.exists) {
+              plugin.write(sender, "admin.switch.no-exist", "info");
+              return true;
+            }
+            try {
+              this.switchIslands(drali, DJTommek, sender);
+            }
+            catch (ProtectedRegion.CircularInheritanceException ex) {
+              Logger.getLogger(SkyAdmin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (InvalidFlagFormat ex) {
+              Logger.getLogger(SkyAdmin.class.getName()).log(Level.SEVERE, null, ex);
+            }
             break;
 
 
@@ -137,13 +157,14 @@ public class SkyAdmin implements CommandExecutor {
     return true;
   }
 
-  public boolean switchIslands(Island aIsland, Island bIsland) {
-    if (!aIsland.exists || !bIsland.exists) {
-      return false;
-    }
+  public boolean switchIslands(Island aIsland, Island bIsland, CommandSender sender) throws
+          ProtectedRegion.CircularInheritanceException,
+          InvalidFlagFormat {
 
     Island a;
     Island b;
+
+
 
     //order islands by id
     if (aIsland.id > bIsland.id) {
@@ -155,9 +176,9 @@ public class SkyAdmin implements CommandExecutor {
       b = bIsland;
     }
 
-    //teleport everybody out
-    a.tpVisitors();
-    b.tpVisitors();
+    //teleport everybody out (including the owner)
+    a.tpVisitors(true);
+    b.tpVisitors(true);
 
     /* skys_islands */
     String idChange1 = "UPDATE " + plugin.mysqlPrefix + "_islands SET x='" + b.x + "', z='" + b.z + "',id='" + 0 + "' WHERE nick = '" + a.ownerNick + "' LIMIT 1;";
@@ -204,23 +225,23 @@ public class SkyAdmin implements CommandExecutor {
       rTools.deleteRegion(b.ownerNick + "island");
       rTools.getWorldGuard().getRegionManager(plugin.skyworld).save();
 
-      System.out.println("Creating region for A");
+      System.out.println("Creating region for B");
 
-      ProtectedRegion newARegion = rTools.makeRegion(b.ownerNick, a.x, a.z);
+      ProtectedRegion newARegion = rTools.createRegion(a.x, a.z, sender, b.ownerNick);
       newARegion.setFlags(bFlags);
       rTools.restorePerms(newARegion, b);
       rTools.getWorldGuard().getRegionManager(plugin.skyworld).save();
 
-      System.out.println("Creating region for B");
+      System.out.println("Creating region for A");
 
-      ProtectedRegion newBRegion = rTools.makeRegion(a.ownerNick, b.x, b.z);
+      ProtectedRegion newBRegion = rTools.createRegion(b.x, b.z, sender, a.ownerNick);
       newARegion.setFlags(aFlags);
       rTools.restorePerms(newBRegion, a);
       rTools.getWorldGuard().getRegionManager(plugin.skyworld).save();
 
     }
     catch (ProtectionDatabaseException ex) {
-      System.out.println("Region swithing failed!");
+      System.out.println("Region switching failed!");
       Logger.getLogger(SkyAdmin.class.getName()).log(Level.SEVERE, null, ex);
     }
     catch (SQLException ex) {

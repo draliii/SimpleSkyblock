@@ -247,19 +247,19 @@ public class SimpleSkyblock extends JavaPlugin {
     //select the first deactivated island in the database
     String sql = "SELECT id, nick, x, z, active, date "
             + "FROM " + this.getMysqlPrefix() + "_islands "
-            + "WHERE active = 0"
-            + "ORDER BY id ASC"
+            + "WHERE active = 0 "
+            + "ORDER BY id ASC "
             + "LIMIT 1;";
-    
+
     ResultSet res = this.database.querySQL(sql);
-    
+
     //jump to the last row
     res.last();
-    
+
     //if something was found
     if (res.getRow() == 1) {
       Island result = new Island(res.getString("nick"), this);
-      
+
       result.x = res.getInt("x");
       result.z = res.getInt("z");
       result.id = res.getInt("id");
@@ -408,7 +408,15 @@ public class SimpleSkyblock extends JavaPlugin {
    * @param args args to fill to the key string in case there are any
    */
   public void write(CommandSender sender, String key, String type, Object... args) {
-    String output = this.out.format(key, args);
+    String output;
+    if (args.length == 0) {
+      //System.out.println("null");
+      output = this.out.get(key);
+    }
+    else {
+      //System.out.println("not null");
+      output = this.out.format(key, args);
+    }
     //console output
     if (!(sender instanceof Player)) {
       //debug message

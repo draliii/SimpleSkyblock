@@ -119,7 +119,12 @@ public class Island {
   }
 
   public void tpVisitors() {
-    Player[] visitors = this.getVisitors();
+    this.tpVisitors(false);
+  }
+  
+  public void tpVisitors(boolean includeOwner){
+   
+    Player[] visitors = this.getVisitors(includeOwner);
     for (int i = 0; i < visitors.length; i++) {
       //teleport players to center point
       plugin.skyTp(0, 0, visitors[i]);
@@ -145,7 +150,11 @@ public class Island {
     player.teleport(new Location(plugin.skyworld, (x + 0.5), (h), (z + 0.5)));
   }
 
-  public Player[] getVisitors() {
+  public Player[] getVisitors(){
+    return this.getVisitors(false);
+  }
+  
+  public Player[] getVisitors(boolean includeOwner) {
     Location loc;
 
     //get max and min value (area of the island with center x and z)
@@ -161,7 +170,10 @@ public class Island {
 
     ArrayList<Player> result = new ArrayList();
     for (Player player : plugin.skyworld.getPlayers()) {
-      if (!player.getName().equalsIgnoreCase(ownerNick)) {
+      if(player.getName().equalsIgnoreCase(ownerNick) && !includeOwner){
+        break;
+      }
+      else{
         loc = player.getLocation();
         px = loc.getBlockX();
         pz = loc.getBlockZ();

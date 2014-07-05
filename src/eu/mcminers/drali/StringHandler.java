@@ -43,7 +43,8 @@ public class StringHandler {
       }
       //create a new one
       defaultFile.createNewFile();
-      plugin.write(null, "admin.generating-language-file", "info", true);
+      System.out.println("Generating language file...");
+      //plugin.write(null, "admin.generating-language-file", "debug");
     }
     catch (IOException e3) {
       //this is not an issue, since this occurs on first startup only and is solved by itself
@@ -212,7 +213,7 @@ public class StringHandler {
     defaultStrings.put("admin.sql.exx", "JDBC Driver not found!");
     defaultStrings.put("admin.sql.ex-load", "There has been an error when loading island of %s after his death!");
     defaultStrings.put("admin.sql.ex-reset", "There has been an error when reseting island of %s after his death!");
-    defaultStrings.put("admin.sql.fail", "MySQL connection couldn't be made.");
+    defaultStrings.put("admin.sql.fail", "MySQL connection couldn't be made. Check plugin.yml and your internet connection.");
     defaultStrings.put("admin.sql.disconnected", "Database was disconnected");
     defaultStrings.put("admin.sql.disconnectedfail", "Error when disconnecting database");
     defaultStrings.put("admin.sql.query", "SQL: %s");
@@ -224,10 +225,12 @@ public class StringHandler {
     defaultStrings.put("admin.noconsole", "Only players can use this command");
     defaultStrings.put("admin.enabled", "SimpleSkyblock loaded!");
     defaultStrings.put("admin.disabled", "SimpleSkyblock disabled!");
-    defaultStrings.put("admin.generating-language-file", "Generating new language file");
+    defaultStrings.put("admin.cachecleared", "Cache was cleared");
     defaultStrings.put("admin.tp.inactive", "Forcing teleport to an inactive island!");
     defaultStrings.put("admin.tp.nonfriend", "WARNING! You are teleporting to an island whose owner didn't add you as his friend.");
-
+    defaultStrings.put("admin.switch.no-exist", "You are trying to switch an island that doesnt exist");
+    defaultStrings.put("admin.switch.samenick", "Muhehe!");
+    
     defaultStrings.put("admin.loading-failed", "The SimpleSkyblock plugin is disabled. Reason: %s");
     defaultStrings.put("plugin.loading-failed", "Sorry, the SimpleSkyblock plugin is disabled. Please contact server administrators.");
     

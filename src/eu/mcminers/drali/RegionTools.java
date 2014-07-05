@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -51,34 +52,45 @@ public class RegionTools {
                  SQLException,
                  ProtectionDatabaseException {
 
+    String playerName = player.getName();
+    return this.createRegion(x, z, player, playerName);
+
+  }
+
+  public ProtectedRegion createRegion(int x, int z, CommandSender sender, String playerName)
+          throws ProtectedRegion.CircularInheritanceException,
+                 InvalidFlagFormat,
+                 SQLException,
+                 ProtectionDatabaseException {
+
     //work with RegionManager (code is nicer that way)
     RegionManager regionManager = this.getWorldGuard().getRegionManager(plugin.skyworld);
 
     //he should not have a WG region yet
-    if (!regionManager.hasRegion(player.getName() + "island")) {
+    if (!regionManager.hasRegion(playerName + "island")) {
       //player.sendMessage("Creating region!");
 
       //make the regionplayer.getName() + "Island"
-      ProtectedRegion region = makeRegion(player.getName() + "island", x, z);
+      ProtectedRegion region = makeRegion(playerName + "island", x, z);
 
       //assign an owner to it
       DefaultDomain owners = new DefaultDomain();
-      owners.addPlayer(player.getName());
+      owners.addPlayer(playerName);
       region.setOwners(owners);
 
       //configure flags
       //TODO: add this to config later
       region.setFlag(DefaultFlag.GREET_MESSAGE,
               DefaultFlag.GREET_MESSAGE.parseInput(this.getWorldGuard(),
-              player,
-              plugin.out.format("plugin.region.enter", player.getName())));
+              sender,
+              plugin.out.format("plugin.region.enter", playerName)));
       region.setFlag(DefaultFlag.FAREWELL_MESSAGE,
               DefaultFlag.FAREWELL_MESSAGE.parseInput(this.getWorldGuard(),
-              player,
-              plugin.out.format("plugin.region.leave", player.getName())));
+              sender,
+              plugin.out.format("plugin.region.leave", playerName)));
       region.setFlag(DefaultFlag.PVP,
               DefaultFlag.PVP.parseInput(this.getWorldGuard(),
-              player,
+              sender,
               "deny"));
 
       //add the region into the RegionManager
@@ -93,7 +105,7 @@ public class RegionTools {
     //if there is already an island with player's name
     //this should never happen
     else {
-      plugin.write(player, "plugin.region.already-protected", "info");
+      plugin.write(sender, "plugin.region.already-protected", "warn");
       return null;
     }
   }
@@ -124,15 +136,16 @@ public class RegionTools {
   }
 
   public void restorePerms(ProtectedRegion region, Island isl) throws
-          SQLException, ProtectionDatabaseException {
+          SQLException,
+          ProtectionDatabaseException {
     String membersList = "SELECT member FROM " + plugin.getMysqlPrefix() + "_members WHERE island_id = '" + isl.id + "';";
     ResultSet result = plugin.database.querySQL(membersList);
-    
-    if(region == null){
+
+    if (region == null) {
       System.out.println("region is null");
       return;
     }
-    
+
     while (result.next()) {
       DefaultDomain members = new DefaultDomain();
       while (result.next()) {
