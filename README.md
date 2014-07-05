@@ -21,8 +21,29 @@ Setup (for servers that weren't using skyblock before):
    properly.
 3. Start your server. SimpleSkyblock will generate all its files and also a plugin.yml,
    which can be found in ./plugins/SimpleSkyblock/plugin.yml.
-4. In your database, create two tables (skys_islands and skys_members). They should
-   look like this:
+4. In your database, create two tables (skys_islands and skys_members) with the following command:
+   ```sql
+
+   SET NAMES utf8;
+
+CREATE TABLE `sbtest_islands` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `nick` varchar(255) NOT NULL,
+  `x` int(10) NOT NULL,
+  `z` int(10) NOT NULL,
+  `date` int(10) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `sbtest_members` (
+  `id` int(10) NOT NULL DEFAULT '0',
+  `island_id` int(10) NOT NULL,
+  `member` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   ```
+
    skys_islands
 
    |Column  |Type                   | 
