@@ -23,6 +23,7 @@ Setup (for servers that weren't using skyblock before):
    which can be found in ./plugins/SimpleSkyblock/plugin.yml.
 4. In your database, create two tables (`skys_islands` and `skys_members`) with the following command:
    ```sql
+
    SET NAMES utf8;
    CREATE TABLE `sbtest_islands` (
      `id` int(10) NOT NULL AUTO_INCREMENT,
