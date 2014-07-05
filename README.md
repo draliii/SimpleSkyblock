@@ -20,7 +20,7 @@ Setup (for servers that weren't using skyblock before):
    which can be found in ./plugins/SimpleSkyblock/plugin.yml.
 4. In your database, create two tables (skys_islands and skys_members). They should
    look like this:
-
+'
    skys_islands
    +--------+-----------------------+
    |Column  |Type                   |
@@ -37,11 +37,11 @@ Setup (for servers that weren't using skyblock before):
    +----------+--------------+
    |Column    |Type          |
    +----------+--------------+
-   |id	      |int(10)[0]    |
+   |id	     |int(10)[0]    |
    |island_id |int(10)       |
    |member    |varchar(255)  |
    +----------+--------------+
-  
+  '
    *You can change the prefix "skys" to whatever you like
   
 5. Open the plugin.yml and fill in the data about your database (including the prefix,
