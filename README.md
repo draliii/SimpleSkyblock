@@ -25,7 +25,6 @@ Setup (for servers that weren't using skyblock before):
    ```sql
 
    SET NAMES utf8;
-
 CREATE TABLE `sbtest_islands` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `nick` varchar(255) NOT NULL,
@@ -35,8 +34,6 @@ CREATE TABLE `sbtest_islands` (
   `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE `sbtest_members` (
   `id` int(10) NOT NULL DEFAULT '0',
   `island_id` int(10) NOT NULL,
