@@ -24,16 +24,16 @@ Setup (for servers that weren't using skyblock before):
 4. In your database, create two tables (skys_islands and skys_members). They should
    look like this:
    skys_islands
-   |--------|-----------------------|
-   |Column  |Type                   |
-   |--------|-----------------------|
+   | ------- | ----------------------- |
+   |Column  |Type                   | 
+   | ------- | ---------------------- |
    |id	     |int(10) Auto Increment |
    |nick    |varchar(255)           |
    |x	     |int(10)	             |
    |z	     |int(10)                |
    |date    |int(10)                |
    |active  |tinyint(1)[1]          |
-   |--------|-----------------------|
+   | -------- | ----------------------- |
 
 
    skys_members
